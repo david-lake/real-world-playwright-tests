@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
     "deploy": "sls --debug",
     "db:migrate": "prisma migrate dev",
     "generate:prisma": "prisma generate",
@@ -52,6 +54,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^12.2.3",
+    "@playwright/test": "^1.58.2",
     "@sls-next/aws-cloudfront": "^3.7.0",
     "@sls-next/aws-lambda": "^3.7.0",
     "@sls-next/aws-sqs": "^3.7.0",

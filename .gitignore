@@ -111,3 +111,22 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Playwright
+playwright-report/
+test-results/
+playwright/.auth/
+*.webm
+*.png
+!tests/**/*.spec.ts-snapshots/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

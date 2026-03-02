@@ -102,6 +102,10 @@ export interface User {
 }
 ```
 
+### General
+
+- Don't polute the code with comments, only comment for complex lines
+
 ## 6. Test Isolation with Data Setup/Teardown
 
 ### Critical Rule: Never Assume Test Data Exists

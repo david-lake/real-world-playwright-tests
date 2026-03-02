@@ -7,7 +7,6 @@ tools:
   - edit
   - write
   - exec
-model: Claude Sonnet 4
 ---
 
 You are a Playwright Test Generator, an expert in browser automation and end-to-end testing.
@@ -127,13 +126,13 @@ const test = base.extend<{
       email: 'test@example.com',
       password: 'TestPassword123!'
     });
-    
+
     await use({
       email: user.email,
       username: user.username,
       password: user.plainPassword
     });
-    
+
     // Cleanup after test
     await deleteUserByEmail(user.email);
   },
@@ -153,7 +152,7 @@ Create data through the UI in a `beforeEach` or at test start:
 ```typescript
 test.describe('Article Management', () => {
   let testUser: { email: string; password: string };
-  
+
   test.beforeEach(async ({ page }) => {
     // Create user via UI registration
     testUser = generateTestUser();
@@ -164,7 +163,7 @@ test.describe('Article Management', () => {
     await page.getByRole('button', { name: /sign up/i }).click();
     await expect(page).toHaveURL('/');
   });
-  
+
   test('user can create article', async ({ page }) => {
     // User is already created and logged in
     await page.getByRole('link', { name: /new article/i }).click();

@@ -208,6 +208,7 @@ Organize tests using this folder structure:
 ```
 tests/
 ├── components/     # Reusable UI component helpers (global)
+├── data/           # Type data structure
 ├── factories/      # Test data factories for DB setup/cleanup
 ├── fixtures/       # Custom test fixtures for setup/teardown
 ├── pages/          # Page Object Models — one class per page/section
@@ -229,12 +230,12 @@ tests/
 // tests/components/navigation.component.ts
 export class NavigationComponent {
   constructor(private page: Page) {}
-  
+
   async clickHome() {
     await this.page.getByRole('link', { name: /home/i }).click();
     await expect(this.page).toHaveURL('/');
   }
-  
+
   async clickSettings() {
     await this.page.getByRole('link', { name: /settings/i }).click();
     await expect(this.page).toHaveURL('/settings');
@@ -301,9 +302,9 @@ export const test = base.extend<{
     await page.getByRole('textbox', { name: /password/i }).fill(user.plainPassword);
     await page.getByRole('button', { name: /sign in/i }).click();
     await expect(page).toHaveURL('/');
-    
+
     await use({ email: user.email, username: user.username });
-    
+
     await deleteUserByEmail(user.email);
   },
 });
@@ -314,7 +315,7 @@ export const test = base.extend<{
 
 **What belongs here:**
 - One POM class per page or major section
-- Page-specific locators and methods
+- Page-specific locators, methods and assertions
 - Business logic and user flows
 - Page navigation methods
 
@@ -323,15 +324,15 @@ export const test = base.extend<{
 // tests/pages/login.page.ts
 export class LoginPage {
   constructor(private page: Page) {}
-  
+
   async goto() {
     await this.page.goto('/login');
     await expect(this.page.getByRole('heading', { name: /sign in/i })).toBeVisible();
   }
-  
+
   async login(email: string, password: string) {
-    await this.page.getByRole('textbox', { name: /email/i }).fill(email);
-    await this.page.getByRole('textbox', { name: /password/i }).fill(password);
+    await this.page.getByLabel('Username').fill(email);
+    await this.page.getByLabel('Password').fill(password);
     await this.page.getByRole('button', { name: /sign in/i }).click();
     await expect(this.page).toHaveURL('/');
   }

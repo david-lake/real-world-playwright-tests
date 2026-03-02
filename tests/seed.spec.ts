@@ -1,7 +1,7 @@
-import { test as base, expect, Page } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test.describe('Test group', () => {
-  test('seed test', async ({ authPage }) => {
-    // generated code goes here
+  test('seed test', async ({ }) => {
+    // Generated tests go here
   });
 });

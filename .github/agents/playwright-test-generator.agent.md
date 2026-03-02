@@ -386,3 +386,75 @@ test.describe('Adding New Todos', () => {
   });
 });
 ```
+
+---
+
+## 8. Verification Checklist — BEFORE Marking Complete
+
+**You MUST complete this checklist and run tests before considering the task done.**
+
+### Step 1: Rule Compliance Verification
+Review the generated test file(s) and verify:
+
+- [ ] **Locator Priority**: All locators use `getByRole()` > `getByLabel()` > `getByPlaceholder()` > `getByText()` > `getByTestId()` (no CSS/XPath)
+- [ ] **Inline Locators**: Locators defined inside methods by default (only promoted to class fields if used 3+ times or tests need access)
+- [ ] **Meaningful Actions**: Methods represent user intent + verification (e.g., `proceedToCheckout()` not `clickCheckout()`)
+- [ ] **Web-First Assertions**: All assertions use `await expect(locator).toBeVisible()` not `expect(await locator.isVisible())`
+- [ ] **Typed Test Data**: Using interfaces/types for data, not primitive strings
+- [ ] **Test Isolation**: Test creates its own data (factory or UI setup) — never assumes pre-existing data
+- [ ] **Data Uniqueness**: Test data uses timestamps/random to avoid conflicts in parallel runs
+- [ ] **Cleanup Strategy**: Fixture teardown or `afterEach` cleanup is implemented
+- [ ] **Folder Structure**: Files placed in correct folders (components/, factories/, fixtures/, pages/, *.spec.ts)
+- [ ] **No Direct Page Access**: Tests interact through POMs/fixtures, not `page` directly
+
+### Step 2: Run Tests to Verify
+Execute the generated test(s) using CLI:
+
+```bash
+# Run the specific test file
+npx playwright test tests/<feature>.spec.ts --project chromium
+
+# Run with verbose output to see all steps
+npx playwright test tests/<feature>.spec.ts --reporter=list --workers=1
+
+# If tests fail, run with headed browser to debug
+npx playwright test tests/<feature>.spec.ts --headed --workers=1
+```
+
+### Step 3: Fix Issues and Repeat
+
+**If ANY rule is violated OR tests fail:**
+
+1. **Identify the issue** — Check error messages and rule violations
+2. **Fix the code** — Use `edit` or `write` to correct the problems
+3. **Re-run tests** — Execute the test command again
+4. **Repeat until passing** — Continue cycle until all rules pass AND tests pass
+
+**Common fixes needed:**
+| Issue | Fix |
+|-------|-----|
+| Using CSS selectors | Replace with `getByRole()` or `getByText()` |
+| Thin wrapper methods | Add verification to method (URL change, visibility check) |
+| Assuming test data exists | Add factory setup or UI-based data creation |
+| Missing cleanup | Add fixture teardown or `afterEach` |
+| Non-unique data | Add timestamp + random to usernames/emails |
+| Wrong file location | Move to correct folder (pages/, factories/, etc.) |
+
+### Step 4: Final Verification Command
+
+Before finishing, run the full test suite to ensure no regressions:
+
+```bash
+npx playwright test --reporter=list
+```
+
+**DO NOT mark task complete until:**
+- [ ] All rules verified
+- [ ] Generated test(s) pass
+- [ ] No regressions in existing tests
+
+**If you cannot get tests passing after 3 attempts, escalate to user with:**
+- What you tried
+- Specific error messages
+- What you think is blocking
+```

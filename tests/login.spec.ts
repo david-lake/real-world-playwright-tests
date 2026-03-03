@@ -1,6 +1,6 @@
 import { test, expect } from '@fixtures/auth.fixture';
-import { LoginPage } from './pages/login.page';
-import { NavigationComponent } from './components/navigation.component';
+import { LoginPage } from '@pages/login.page';
+import { NavigationComponent } from '@components/navigation.component';
 
 test.describe('User Login', () => {
   test('TC-008: Successful Login with Email and Password', async ({ page, testUser }) => {

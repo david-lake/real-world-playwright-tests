@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures/auth.fixture';
-import { RegisterPage } from './pages/register.page';
-import { LoginPage } from './pages/login.page';
-import { generateUniqueUser, deleteUserByEmail } from './factories/user.factory';
+import { RegisterPage } from '@pages/register.page';
+import { LoginPage } from '@pages/login.page';
+import { generateUniqueUser, deleteUserByEmail } from '@factories/user.factory';
 
 test.describe('User Registration', () => {
   test('TC-001: Successful User Registration', async ({ page }) => {

@@ -1,7 +1,7 @@
 import { test, expect } from '@fixtures/auth.fixture';
-import { LoginPage } from './pages/login.page';
-import { SettingsPage } from './pages/settings.page';
-import { NavigationComponent } from './components/navigation.component';
+import { LoginPage } from '@pages/login.page';
+import { SettingsPage } from '@pages/settings.page';
+import { NavigationComponent } from '@components/navigation.component';
 
 test.describe('User Logout', () => {
   test('TC-021: Successful Logout', async ({ page, testUser }) => {

@@ -2,7 +2,7 @@ import { test } from '@fixtures/auth.fixture';
 import { generateUniqueUser } from '@factories/user.factory';
 
 test.describe('Registration', () => {
-  test('TC-001: Successful User Registration', async ({ app }) => {
+  test('TC-001: Successful user registration', async ({ app }) => {
     const userData = generateUniqueUser();
 
     await app.login.goto();

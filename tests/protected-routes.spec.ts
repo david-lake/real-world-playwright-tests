@@ -1,7 +1,7 @@
 import { test } from '@fixtures/auth.fixture';
 
 test.describe('Protected Routes', () => {
-  test('TC-013: Access Settings Page When Authenticated', async ({ app, testUser }) => {
+  test('TC-013: Access settings page when authenticated', async ({ app, testUser }) => {
     await app.login.goto();
     await app.login.loginAs(testUser);
     await app.home.isLoaded();
@@ -11,7 +11,7 @@ test.describe('Protected Routes', () => {
     await app.settings.isLoaded();
   });
 
-  test('TC-014: Access Settings Page When Not Authenticated', async ({ app }) => {
+  test('TC-014: Access settings page when not authenticated', async ({ app }) => {
     await app.settings.goto();
     await app.login.isLoaded();
   });

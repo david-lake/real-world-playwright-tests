@@ -1,7 +1,7 @@
 import { test } from '@fixtures/auth.fixture';
 
 test.describe('Logout', () => {
-  test('TC-021: Successful Logout', async ({ app, testUser }) => {
+  test('TC-021: Successful logout', async ({ app, testUser }) => {
     await app.login.goto();
     await app.login.loginAs(testUser);
     await app.home.isLoaded();

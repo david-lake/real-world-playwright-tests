@@ -1,5 +1,4 @@
 import { Page, expect } from '@playwright/test';
-import { safeClick, safeFill } from 'playwright-healer';
 
 export class LoginPage {
   constructor(private page: Page) {}
@@ -10,9 +9,9 @@ export class LoginPage {
   }
 
   async login(email: string, password: string) {
-    await safeFill(this.page, 'input[placeholder="Email"]', email);
-    await safeFill(this.page, 'input[placeholder="Password"]', password);
-    await safeClick(this.page, 'button:has-text("Sign in")');
+    await this.page.getByPlaceholder('Email').fill(email);
+    await this.page.getByPlaceholder('Password').fill(password);
+    await this.page.getByRole('button', { name: /sign in/i }).click();
   }
 
   async expectLoginSuccess() {

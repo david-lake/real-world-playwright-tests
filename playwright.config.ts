@@ -52,6 +52,8 @@ export default defineConfig({
   ],
 
   // Run local dev server before starting the tests
+  // NOTE: Requires .env file with DATABASE_URL and PRIVATE_JWK to be present
+  // Tests should be run via: yarn test (which loads .env via env-cmd)
   webServer: {
     command: 'yarn dev',
     url: 'http://localhost:3000',

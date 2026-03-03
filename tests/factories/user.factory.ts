@@ -46,6 +46,21 @@ export async function deleteUserByUsername(username: string) {
   await prisma.user.deleteMany({ where: { username } });
 }
 
+/**
+ * Global cleanup: Delete all test users created during tests.
+ * Matches users with emails starting with 'test_' or usernames starting with 'testuser_'.
+ */
+export async function deleteAllTestUsers() {
+  await prisma.user.deleteMany({
+    where: {
+      OR: [
+        { email: { startsWith: 'test_' } },
+        { username: { startsWith: 'testuser_' } },
+      ],
+    },
+  });
+}
+
 export async function findUserByEmail(email: string) {
   return prisma.user.findUnique({ where: { email } });
 }

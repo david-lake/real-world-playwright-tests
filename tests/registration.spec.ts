@@ -1,5 +1,5 @@
 import { test, expect } from '@fixtures/auth.fixture';
-import { generateUniqueUser, deleteUserByEmail } from '@factories/user.factory';
+import { generateUniqueUser } from '@factories/user.factory';
 
 test.describe('User Registration', () => {
   test('TC-001: Successful User Registration', async ({ app, page }) => {
@@ -12,9 +12,7 @@ test.describe('User Registration', () => {
     // After registration, router.back() goes to login page - navigate to home
     await page.goto('/');
     await app.register.expectRegistrationSuccess();
-
-    // Clean up the user created via UI
-    await deleteUserByEmail(userData.email);
+    // Cleanup handled by global afterEach
   });
 
   test('TC-007: Guest-Only Restriction on Registration Page', async ({ app, testUser, page }) => {

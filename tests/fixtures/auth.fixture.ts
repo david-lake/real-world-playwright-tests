@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test';
-import { createUser, deleteUserByEmail } from '../factories/user.factory.js';
+import { createUser, deleteUserByEmail } from '../factories/user.factory';
 
-interface TestUser {
+export interface TestUser {
   username: string;
   email: string;
   password: string;

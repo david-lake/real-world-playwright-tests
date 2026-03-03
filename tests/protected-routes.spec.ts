@@ -1,28 +1,7 @@
-import { test as base, expect } from '@playwright/test';
-import { LoginPage } from './pages/login.page.js';
-import { SettingsPage } from './pages/settings.page.js';
-import { NavigationComponent } from './components/navigation.component.js';
-import { createUser, deleteUserByEmail } from './factories/user.factory.js';
-
-interface TestUser {
-  username: string;
-  email: string;
-  password: string;
-}
-
-const test = base.extend<{
-  testUser: TestUser;
-}>({
-  testUser: async ({}, use) => {
-    const user = await createUser();
-    await use({
-      username: user.username,
-      email: user.email,
-      password: user.plainPassword,
-    });
-    await deleteUserByEmail(user.email);
-  },
-});
+import { test, expect } from '@fixtures/auth.fixture';
+import { LoginPage } from './pages/login.page';
+import { SettingsPage } from './pages/settings.page';
+import { NavigationComponent } from './components/navigation.component';
 
 test.describe('Protected Routes', () => {
   test('TC-013: Access Settings Page When Authenticated', async ({ page, testUser }) => {

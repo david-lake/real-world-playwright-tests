@@ -1,27 +1,7 @@
-import { test as base, expect } from '@playwright/test';
-import { RegisterPage } from './pages/register.page.js';
-import { LoginPage } from './pages/login.page.js';
-import { createUser, deleteUserByEmail, generateUniqueUser } from './factories/user.factory.js';
-
-interface TestUser {
-  username: string;
-  email: string;
-  password: string;
-}
-
-const test = base.extend<{
-  testUser: TestUser;
-}>({
-  testUser: async ({}, use) => {
-    const user = await createUser();
-    await use({
-      username: user.username,
-      email: user.email,
-      password: user.plainPassword,
-    });
-    await deleteUserByEmail(user.email);
-  },
-});
+import { test, expect } from '@fixtures/auth.fixture';
+import { RegisterPage } from './pages/register.page';
+import { LoginPage } from './pages/login.page';
+import { generateUniqueUser, deleteUserByEmail } from './factories/user.factory';
 
 test.describe('User Registration', () => {
   test('TC-001: Successful User Registration', async ({ page }) => {

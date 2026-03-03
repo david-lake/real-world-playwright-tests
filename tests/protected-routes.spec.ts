@@ -1,26 +1,18 @@
 import { test, expect } from '@fixtures/auth.fixture';
-import { LoginPage } from '@pages/login.page';
-import { SettingsPage } from '@pages/settings.page';
-import { NavigationComponent } from '@components/navigation.component';
 
 test.describe('Protected Routes', () => {
-  test('TC-013: Access Settings Page When Authenticated', async ({ page, testUser }) => {
-    const loginPage = new LoginPage(page);
-    const settingsPage = new SettingsPage(page);
-    const nav = new NavigationComponent(page);
-
-    await nav.gotoLogin();
-    await loginPage.login(testUser.email, testUser.password);
+  test('TC-013: Access Settings Page When Authenticated', async ({ app, testUser, page }) => {
+    await app.nav.gotoLogin();
+    await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 
-    await settingsPage.goto();
+    await app.settings.goto();
     await expect(page).toHaveURL('/settings');
     await expect(page.getByRole('heading', { name: /your settings/i })).toBeVisible();
   });
 
-  test('TC-014: Access Settings Page When Not Authenticated', async ({ page }) => {
-    const settingsPage = new SettingsPage(page);
-    await settingsPage.goto();
+  test('TC-014: Access Settings Page When Not Authenticated', async ({ app, page }) => {
+    await app.settings.goto();
     await expect(page).toHaveURL('/login');
   });
 });

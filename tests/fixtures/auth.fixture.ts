@@ -1,5 +1,6 @@
 import { test as base, expect } from '@playwright/test';
-import { createUser, deleteUserByEmail } from '../factories/user.factory';
+import { createUser, deleteUserByEmail } from '@factories/user.factory';
+import { App } from '../app';
 
 export interface TestUser {
   username: string;
@@ -9,6 +10,7 @@ export interface TestUser {
 
 export const test = base.extend<{
   testUser: TestUser;
+  app: App;
 }>({
   testUser: async ({}, use) => {
     const user = await createUser();
@@ -20,6 +22,9 @@ export const test = base.extend<{
     });
 
     await deleteUserByEmail(user.email);
+  },
+  app: async ({ page }, use) => {
+    await use(new App(page));
   },
 });
 

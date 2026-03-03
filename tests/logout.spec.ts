@@ -1,39 +1,28 @@
 import { test, expect } from '@fixtures/auth.fixture';
-import { LoginPage } from '@pages/login.page';
-import { SettingsPage } from '@pages/settings.page';
-import { NavigationComponent } from '@components/navigation.component';
 
 test.describe('User Logout', () => {
-  test('TC-021: Successful Logout', async ({ page, testUser }) => {
-    const loginPage = new LoginPage(page);
-    const settingsPage = new SettingsPage(page);
-    const nav = new NavigationComponent(page);
-
-    await nav.gotoLogin();
-    await loginPage.login(testUser.email, testUser.password);
+  test('TC-021: Successful Logout', async ({ app, testUser, page }) => {
+    await app.nav.gotoLogin();
+    await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 
-    await settingsPage.goto();
+    await app.settings.goto();
     await expect(page).toHaveURL('/settings');
 
-    await settingsPage.logout();
+    await app.settings.logout();
     // App redirects to /login after logout due to withAuth redirect
     await expect(page).toHaveURL('/login');
   });
 
-  test('TC-022: Token Removed After Logout', async ({ page, testUser }) => {
-    const loginPage = new LoginPage(page);
-    const settingsPage = new SettingsPage(page);
-    const nav = new NavigationComponent(page);
-
-    await nav.gotoLogin();
-    await loginPage.login(testUser.email, testUser.password);
+  test('TC-022: Token Removed After Logout', async ({ app, testUser, page }) => {
+    await app.nav.gotoLogin();
+    await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 
     const tokenBeforeLogout = await page.evaluate(() => localStorage.getItem('token'));
     expect(tokenBeforeLogout).not.toBeNull();
 
-    await settingsPage.goto();
+    await app.settings.goto();
     await expect(page).toHaveURL('/settings');
 
     // Check token exists on settings page before logout

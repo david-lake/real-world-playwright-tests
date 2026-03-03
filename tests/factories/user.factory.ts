@@ -7,7 +7,26 @@ function hashPassword(password: string): string {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 }
 
-export function generateUniqueUser(): { username: string; email: string; password: string } {
+/**
+ * User data type for test users
+ */
+export interface UserData {
+  username: string;
+  email: string;
+  password: string;
+  bio?: string;
+  image?: string;
+}
+
+/**
+ * Test user returned by createUser - includes DB fields + plainPassword
+ */
+export interface TestUser extends UserData {
+  id: number;
+  plainPassword: string;
+}
+
+export function generateUniqueUser(): UserData {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(7);
   return {
@@ -17,13 +36,7 @@ export function generateUniqueUser(): { username: string; email: string; passwor
   };
 }
 
-export async function createUser(overrides: {
-  username?: string;
-  email?: string;
-  password?: string;
-  bio?: string;
-  image?: string;
-} = {}) {
+export async function createUser(overrides: Partial<UserData> = {}): Promise<TestUser> {
   const userData = generateUniqueUser();
   const plainPassword = overrides.password ?? userData.password;
   const user = await prisma.user.create({

@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * Minimal Playwright Configuration
- * 
+ *
  * Starting with Chromium only. Other browsers can be added later.
  */
 

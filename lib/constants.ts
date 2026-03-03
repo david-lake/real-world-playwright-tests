@@ -7,9 +7,9 @@ export const TOKEN_PREFIX = 'Bearer ';
 
 export const PUBLIC_JWK = {
   kty: 'RSA',
-  n: '7eGUQShs61hTMR82MIHOEhenHAm5j5WEZPQN7L4Yb51KR8_RsMwYnPp8hPSN8NUsZTvlv3bI2hEvmWy2iZ5a5M0SzJjkMKu50X7d2zD5KEZWCPMw6XH90OpGz3Ue9UcaTCGKNHSgG6hSXoNF4dMobBmCb0hUEKH1beuSyDDJ3_yyary1Wk-3nIvwtdvnZhBT-tmbXKhf7fZNJ02ouKI_jrUME_kGzl5dcTBuC-w-CQ2OH54Oh1AqALcI6xgkAWMpPho6hhAvENmCIHTg1oKb8niFCDGyYgqE9erLJsz8xMTWCBHojfyFuoGBeNjpmOa8oTq_9H-cbBvYIamrRniNYQ',
+  n: '0qRhR5EXIzmbzCyDjjugwVaeRjPqVGBMNwpOWk-lxDMGVJgh_0R6Bwy-mkjWGYTVtYXcvuMZv6RXEA000lkA4KLCDf1hsr1b2pN-rOoVLJddfY0CJq4dI7FRdLjswKVg7plwVZBBv_4aa4gJmyYe1GR3mvh_5Fiy646myVVM6495_sauN0eAA902vDhNuGFxhkPFgfpJIrtjuj31bGAA5-FyoAQljqZrQMdlmrKIkzMl8WYdFwt85pAfqfSbrOx42zs-MIVrIlcNU5J34kefDKCQT5H5n9DikPXmTaLBnahND4PR7-bCa0MPfvtU0cDAbu5FYpRoLM_4zCkzXZKt7w',
   e: 'AQAB'
-};
+}
 
 /** frontend constants */
 

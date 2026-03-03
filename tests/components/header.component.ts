@@ -42,33 +42,20 @@ export class Header {
 
   // --- State Verification ---
 
-  async isLoggedIn(): Promise<boolean> {
-    return await this.page.getByRole('link', { name: /^settings$/i }).isVisible().catch(() => false);
-  }
-
-  async isLoggedOut(): Promise<boolean> {
-    return await this.page.getByRole('link', { name: /sign in/i }).isVisible().catch(() => false);
-  }
-
-  async expectLoggedIn(username: string) {
-    // Wait for auth state to settle (loading state resolves)
-    await this.page.waitForFunction(
-      () => {
-        const settings = document.querySelector('nav a[href="/settings"]');
-        const signIn = document.querySelector('nav a[href="/login"]');
-        return settings !== null || signIn !== null;
-      },
-      { timeout: 10000 }
-    );
-    await expect(this.page.getByRole('link', { name: /^settings$/i })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: /new article/i })).toBeVisible();
+  async isLoggedIn(username: string) {
+    // Verify authenticated header state
+    await expect(this.page.getByRole('link', { name: "Settings" })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: "New article" })).toBeVisible();
     await expect(this.page.getByRole('link', { name: username })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: /sign in/i })).not.toBeVisible();
+    // Verify no guest links
+    await expect(this.page.getByRole('link', { name: "Sign in" })).not.toBeVisible();
   }
 
-  async expectLoggedOut() {
-    await expect(this.page.getByRole('link', { name: /sign in/i })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: /sign up/i })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: /^settings$/i })).not.toBeVisible();
+  async isLoggedOut() {
+    // Verify guest header state
+    await expect(this.page.getByRole('link', { name: "Sign in" })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: "Sign up" })).toBeVisible();
+    // Verify no authenticated links
+    await expect(this.page.getByRole('link', { name: "Settings" })).not.toBeVisible();
   }
 }

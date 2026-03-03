@@ -7,7 +7,7 @@ test.describe('Registration', () => {
 
     // Navigate to register from login page so router.back() works after signup
     await app.login.goto();
-    await app.login.clickNeedAnAccount();
+    await app.login.gotoNeedAnAccount();
     await app.register.register(userData.username, userData.email, userData.password);
     // After registration, router.back() goes to login page - navigate to home
     await page.goto('/');

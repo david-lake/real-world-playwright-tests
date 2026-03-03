@@ -1,12 +1,10 @@
-import { test, expect } from '@fixtures/auth.fixture';
+import { test } from '@fixtures/auth.fixture';
 
 test.describe('Login', () => {
-  test('TC-008: Successful Login with Email and Password', async ({ app, testUser, page }) => {
+  test('TC-008: Successful login with valid email and password', async ({ app, testUser }) => {
     await app.login.goto();
     await app.login.loginAs(testUser);
-    // Verify successful login by checking URL and localStorage token
-    await expect(page).toHaveURL('/');
-    const token = await page.evaluate(() => localStorage.getItem('token'));
-    expect(token).not.toBeNull();
+    await app.home.isLoaded();
+    await app.header.isLoggedIn(testUser.username);
   });
 });

@@ -1,7 +1,27 @@
-import { test, expect } from '@playwright/test';
-import { RegisterPage } from './pages/register.page';
-import { LoginPage } from './pages/login.page';
-import { createUser, deleteUserByEmail, generateUniqueUser } from './factories/user.factory';
+import { test as base, expect } from '@playwright/test';
+import { RegisterPage } from './pages/register.page.js';
+import { LoginPage } from './pages/login.page.js';
+import { createUser, deleteUserByEmail, generateUniqueUser } from './factories/user.factory.js';
+
+interface TestUser {
+  username: string;
+  email: string;
+  password: string;
+}
+
+const test = base.extend<{
+  testUser: TestUser;
+}>({
+  testUser: async ({}, use) => {
+    const user = await createUser();
+    await use({
+      username: user.username,
+      email: user.email,
+      password: user.plainPassword,
+    });
+    await deleteUserByEmail(user.email);
+  },
+});
 
 test.describe('User Registration', () => {
   test('TC-001: Successful User Registration', async ({ page }) => {
@@ -17,22 +37,20 @@ test.describe('User Registration', () => {
     await page.goto('/');
     await registerPage.expectRegistrationSuccess();
 
+    // Clean up the user created via UI
     await deleteUserByEmail(userData.email);
   });
 
-  test('TC-007: Guest-Only Restriction on Registration Page', async ({ page }) => {
+  test('TC-007: Guest-Only Restriction on Registration Page', async ({ page, testUser }) => {
     const registerPage = new RegisterPage(page);
     const loginPage = new LoginPage(page);
-    const user = await createUser();
 
     await loginPage.goto();
-    await loginPage.login(user.email, user.plainPassword);
+    await loginPage.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 
     // Navigate to /register - should redirect to / because user is logged in
     await page.goto('/register');
     await expect(page).toHaveURL('/');
-
-    await deleteUserByEmail(user.email);
   });
 });

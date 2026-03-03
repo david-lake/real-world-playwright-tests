@@ -1,9 +1,14 @@
 import { test as base, expect } from '@playwright/test';
-import { createUser, deleteUserByEmail } from '../factories/user.factory';
-import { User } from '../data/user';
+import { createUser, deleteUserByEmail } from '../factories/user.factory.js';
+
+interface TestUser {
+  username: string;
+  email: string;
+  password: string;
+}
 
 export const test = base.extend<{
-  testUser: User;
+  testUser: TestUser;
 }>({
   testUser: async ({}, use) => {
     const user = await createUser();

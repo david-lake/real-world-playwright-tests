@@ -20,7 +20,7 @@ test('TC-008: Successful login with valid email and password', async ({ app, tes
 
 ```
 tests/
-├── components/        # Global UI components (header, footer, navigation)
+├── components/        # Global UI components (header, footer, navigation, notifications, modals etc)
 ├── factories/         # Database factories for test data setup/cleanup
 ├── fixtures/          # Custom Playwright fixtures (auth, app, testUser)
 ├── pages/             # Page Object Models + App class
@@ -88,13 +88,13 @@ Every authentication test follows this pattern:
 test('TC-XXX: Clear description of what user is doing', async ({ app, testUser }) => {
   // 1. Navigate to starting page
   await app.login.goto();
-  
+
   // 2. Perform action (login, register, logout)
   await app.login.loginAs(testUser);
-  
+
   // 3. Verify landing page loaded
   await app.home.isLoaded();
-  
+
   // 4. Verify auth state via UI (NOT just URL)
   await app.header.isLoggedIn(testUser.username);
 });
@@ -133,7 +133,7 @@ await app.settings.isLoaded();
 ## Locator Priority (Strict Order)
 
 1. `getByRole()` — Primary method (buttons, links, headings)
-2. `getByLabel()` — Form controls with labels  
+2. `getByLabel()` — Form controls with labels
 3. `getByPlaceholder()` — Inputs without labels
 4. `getByText()` — Non-interactive elements only
 5. `getByTestId()` — Last resort when user-facing locators impossible
@@ -170,7 +170,7 @@ export class LoginPage {
   async isLoaded() {
     await expect(this.page.getByRole('heading', { name: /sign in/i })).toBeVisible();
   }
-  
+
   async loginAs(user: UserData) {
     await this.page.getByPlaceholder('Email').fill(user.email);
     await this.page.getByPlaceholder('Password').fill(user.password);
@@ -284,8 +284,7 @@ import { generateUniqueUser } from '../factories/user.factory';
       "@fixtures/*": ["tests/fixtures/*"],
       "@pages/*": ["tests/pages/*"],
       "@components/*": ["tests/components/*"],
-      "@factories/*": ["tests/factories/*"],
-      "@data/*": ["tests/data/*"]
+      "@factories/*": ["tests/factories/*"]
     }
   }
 }

@@ -51,6 +51,7 @@ Or use the VS Code Playwright extension to inspect elements and generate locator
 - Test must be placed in a describe matching the top-level test plan item
 - Test title must match the scenario name
 - Always use best practices from the codebase
+- Always keep consistentcy with other tests
 
 ## Example Generation
 

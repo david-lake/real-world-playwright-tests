@@ -1,302 +1,474 @@
-## Test achitecture and best practices to follow
+# Test Architecture & Best Practices
 
-### Locator Priority (Strict Order)
+## Philosophy
+
+**Tests should read like user stories.** Each test expresses clear user intent with minimal boilerplate. If you can't understand what the test does in 10 seconds, it's wrong.
+
+**Example of the final style:**
+```typescript
+test('TC-008: Successful login with valid email and password', async ({ app, testUser }) => {
+  await app.login.goto();
+  await app.login.loginAs(testUser);
+  await app.home.isLoaded();
+  await app.header.isLoggedIn(testUser.username);
+});
+```
+
+---
+
+## Project Structure
+
+```
+tests/
+├── components/        # Global UI components (header, footer, navigation)
+├── factories/         # Database factories for test data setup/cleanup
+├── fixtures/          # Custom Playwright fixtures (auth, app, testUser)
+├── pages/             # Page Object Models + App class
+│   ├── app.ts         # Combines all pages/components
+│   ├── home.page.ts
+│   ├── login.page.ts
+│   └── ...
+├── docs/              # Architecture documentation
+└── *.spec.ts          # Test files grouped by feature
+```
+
+---
+
+## The App Pattern
+
+**All pages and components are accessed through a single `app` object.**
+
+```typescript
+// fixtures/auth.fixture.ts
+import { App } from '@pages/app';
+
+export const test = base.extend<{
+  testUser: UserData;
+  app: App;
+}>({
+  app: async ({ page }, use) => {
+    await use(new App(page));
+  },
+});
+```
+
+```typescript
+// tests/pages/app.ts
+export class App {
+  readonly login: LoginPage;
+  readonly register: RegisterPage;
+  readonly settings: SettingsPage;
+  readonly home: HomePage;
+  readonly header: Header;
+
+  constructor(readonly page: Page) {
+    this.login = new LoginPage(page);
+    this.register = new RegisterPage(page);
+    this.settings = new SettingsPage(page);
+    this.home = new HomePage(page);
+    this.header = new Header(page);
+  }
+}
+```
+
+**Benefits:**
+- Tests are clean: `await app.login.goto()` instead of `const loginPage = new LoginPage(page)`
+- Single import in tests: `import { test } from '@fixtures/auth.fixture'`
+- All pages/components available via autocomplete
+
+---
+
+## Test Structure
+
+### The Standard Test Pattern
+
+Every authentication test follows this pattern:
+
+```typescript
+test('TC-XXX: Clear description of what user is doing', async ({ app, testUser }) => {
+  // 1. Navigate to starting page
+  await app.login.goto();
+  
+  // 2. Perform action (login, register, logout)
+  await app.login.loginAs(testUser);
+  
+  // 3. Verify landing page loaded
+  await app.home.isLoaded();
+  
+  // 4. Verify auth state via UI (NOT just URL)
+  await app.header.isLoggedIn(testUser.username);
+});
+```
+
+### Strong Assertions (NOT Just URLs)
+
+**❌ Bad: Only checking URL**
+```typescript
+await app.login.loginAs(testUser);
+await expect(page).toHaveURL('/');  // This doesn't prove login worked!
+```
+
+**✅ Good: Checking UI state**
+```typescript
+await app.login.loginAs(testUser);
+await app.home.isLoaded();
+await app.header.isLoggedIn(testUser.username);  // Verifies Settings, New Article, username links visible
+```
+
+**State Verification Methods:**
+
+```typescript
+// Header component - use for all auth state checks
+await app.header.isLoggedIn(username);   // Verifies authenticated UI
+await app.header.isLoggedOut();          // Verifies guest UI
+
+// Page load verification
+await app.home.isLoaded();
+await app.login.isLoaded();
+await app.settings.isLoaded();
+```
+
+---
+
+## Locator Priority (Strict Order)
+
 1. `getByRole()` — Primary method (buttons, links, headings)
-2. `getByLabel()` — Form controls with labels
+2. `getByLabel()` — Form controls with labels  
 3. `getByPlaceholder()` — Inputs without labels
 4. `getByText()` — Non-interactive elements only
 5. `getByTestId()` — Last resort when user-facing locators impossible
 
-### Inline Locators
-Define locators directly inside methods by default:
+**❌ Never use:**
+- CSS selectors (`input[placeholder="Email"]`)
+- XPath
+- Text contains when exact match possible
 
+**✅ Example:**
 ```typescript
-async enterShippingInfo(user: User) {
-  await this.page.getByPlaceholder('First Name').fill(user.firstName);
-  await this.page.getByRole('button', { name: 'Continue' }).click();
+async loginAs(user: UserData) {
+  await this.page.getByPlaceholder('Email').fill(user.email);
+  await this.page.getByPlaceholder('Password').fill(user.password);
+  await this.page.getByRole('button', { name: "Sign in" }).click();
 }
 ```
 
-Promote to class fields only when used in 3+ methods or tests need direct access.
+---
 
-### Meaningful Actions
-Methods must represent user intent + verification:
+## Page Object Model Patterns
 
-| ❌ Bad (Thin Wrapper) | ✅ Good (Meaningful Action) |
-|----------------------|----------------------------|
-| `clickCheckout()` | `proceedToCheckout()` — clicks AND verifies URL |
-| `fillFirstName(text)` | `enterShippingInfo(user: User)` — fills all fields |
-
-### Web-First Assertions
-Always use Playwright's auto-retrying assertions:
+### Every Page Has `goto()` and `isLoaded()`
 
 ```typescript
-await expect(this.page).toHaveURL(/checkout/);
-await expect(this.cartItems).toHaveCount(2);
-await expect(this.errorMessage).toBeVisible();
-```
-
-### Typed Test Data
-Create typed data objects in `tests/data/`:
-
-```typescript
-export interface User {
-  username: string;
-  email: string;
-  password: string;
-}
-```
-
-### General
-
-- Don't polute the code with comments, only comment for complex lines
-
-## 6. Test Isolation with Data Setup/Teardown
-
-### Critical Rule: Never Assume Test Data Exists
-**Each test must create its own test data.** Tests that rely on pre-existing data will fail when run in isolation or in CI.
-
-### Data Setup Patterns
-
-**Direct Database Setup**
-Use factories in `tests/factories/` to create data via Prisma/ORM:
-
-```typescript
-import { test as base, expect } from '@playwright/test';
-import { createUser, deleteUserByEmail } from '../factories/user.factory';
-
-const test = base.extend<{
-  testUser: { email: string; username: string; password: string };
-}>({
-  testUser: async ({}, use) => {
-    // Create user directly in DB
-    const user = await createUser({
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'TestPassword123!'
-    });
-
-    await use({
-      email: user.email,
-      username: user.username,
-      password: user.plainPassword
-    });
-
-    // Cleanup after test
-    await deleteUserByEmail(user.email);
-  },
-});
-
-test('user can login with registered credentials', async ({ page, testUser }) => {
-  // Now testUser exists in DB - proceed with test
-  await page.goto('/login');
-  await page.getByRole('textbox', { name: /email/i }).fill(testUser.email);
-  // ... rest of test
-});
-```
-
-### Data Uniqueness
-Always generate unique data to avoid conflicts when tests run in parallel:
-
-```typescript
-function generateTestUser() {
-  const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(7);
-  return {
-    username: `testuser_${timestamp}_${random}`,
-    email: `test_${timestamp}_${random}@example.com`,
-    password: 'TestPassword123!'
-  };
-}
-```
-
-### Cleanup Strategy
-- **Preferred**: Use fixture `use()` callback for automatic cleanup
-- **Alternative**: Use `test.afterEach()` for cleanup
-- **Last resort**: Use unique data and global cleanup (least reliable)
-
-### Before Generating Any Test
-Ask yourself:
-1. [ ] What data does this test need to exist before it runs?
-2. [ ] How will I create that data (factory or UI)?
-3. [ ] How will I ensure the data is unique (timestamps/random)?
-4. [ ] How will I clean up after the test?
-
-**Never generate a test that assumes data exists without showing how it's created.**
-
-## 7. Project Structure
-
-Organize tests using this folder structure:
-
-```
-tests/
-├── components/     # Reusable UI component helpers (global)
-├── data/           # Type data structure
-├── factories/      # Test data factories for DB setup/cleanup
-├── fixtures/       # Custom test fixtures for setup/teardown
-├── pages/          # Page Object Models — one class per page/section
-└── *.spec.ts       # Test files grouped by feature
-```
-
-### Components Folder
-**Purpose:** Reusable UI component interactions that appear across multiple pages.
-
-**What belongs here:**
-- Navigation components (header, sidebar, footer)
-- Common form elements (date pickers, search bars, dropdowns)
-- Modal/dialog interactions
-- Toast/notification handlers
-- Reusable button groups or action menus
-
-**Example:**
-```typescript
-// tests/components/navigation.component.ts
-export class NavigationComponent {
-  constructor(private page: Page) {}
-
-  async clickHome() {
-    await this.page.getByRole('link', { name: /home/i }).click();
-    await expect(this.page).toHaveURL('/');
-  }
-
-  async clickSettings() {
-    await this.page.getByRole('link', { name: /settings/i }).click();
-    await expect(this.page).toHaveURL('/settings');
-  }
-}
-```
-
-### Factories Folder
-**Purpose:** Create and clean up test data directly in the database.
-
-**What belongs here:**
-- User factories (createUser, deleteUser)
-- Article/post factories
-- Comment factories
-- Any domain entity that needs test data
-- Cleanup functions for data teardown
-
-**Example:**
-```typescript
-// tests/factories/user.factory.ts
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
-
-export async function createUser(overrides = {}) {
-  const user = await prisma.user.create({
-    data: {
-      username: `test_${Date.now()}`,
-      email: `test_${Date.now()}@example.com`,
-      password: await hashPassword('TestPass123!'),
-      ...overrides
-    }
-  });
-  return { ...user, plainPassword: 'TestPass123!' };
-}
-
-export async function deleteUserByEmail(email: string) {
-  await prisma.user.deleteMany({ where: { email } });
-}
-```
-
-### Fixtures Folder
-**Purpose:** Extend Playwright's base test with custom fixtures.
-
-**What belongs here:**
-- Authentication fixtures (auto-login users)
-- Database seeding fixtures
-- Common setup patterns shared across test files
-- Page object fixtures for clean test imports
-
-**Example:**
-```typescript
-// tests/fixtures/auth.fixture.ts
-import { test as base } from '@playwright/test';
-import { createUser, deleteUserByEmail } from '../factories/user.factory';
-
-export const test = base.extend<{
-  authenticatedUser: { email: string; username: string };
-}>({
-  authenticatedUser: async ({ page }, use) => {
-    const user = await createUser();
-    await page.goto('/login');
-    await page.getByRole('textbox', { name: /email/i }).fill(user.email);
-    await page.getByRole('textbox', { name: /password/i }).fill(user.plainPassword);
-    await page.getByRole('button', { name: /sign in/i }).click();
-    await expect(page).toHaveURL('/');
-
-    await use({ email: user.email, username: user.username });
-
-    await deleteUserByEmail(user.email);
-  },
-});
-```
-
-### Pages Folder
-**Purpose:** Page Object Models for complex page interactions.
-
-**What belongs here:**
-- One POM class per page or major section
-- Page-specific locators, methods and assertions
-- Business logic and user flows
-- Page navigation methods
-
-**Example:**
-```typescript
-// tests/pages/login.page.ts
 export class LoginPage {
   constructor(private page: Page) {}
 
   async goto() {
     await this.page.goto('/login');
-    await expect(this.page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+    await this.isLoaded();  // Verify we actually landed
   }
 
-  async login(email: string, password: string) {
-    await this.page.getByLabel('Username').fill(email);
-    await this.page.getByLabel('Password').fill(password);
-    await this.page.getByRole('button', { name: /sign in/i }).click();
-    await expect(this.page).toHaveURL('/');
+  async isLoaded() {
+    await expect(this.page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+  }
+  
+  async loginAs(user: UserData) {
+    await this.page.getByPlaceholder('Email').fill(user.email);
+    await this.page.getByPlaceholder('Password').fill(user.password);
+    await this.page.getByRole('button', { name: "Sign in" }).click();
   }
 }
 ```
 
-### Test Files (*.spec.ts)
-**Purpose:** Actual test implementations.
+### Methods Represent User Intent
 
-**What belongs here:**
-- Test suites organized by feature
-- Test cases with steps and assertions
-- Feature-specific beforeEach setup
-- Import and use fixtures, pages, and factories
-
-**Structure:**
+**❌ Bad:**
 ```typescript
-import { test, expect } from '../fixtures/auth.fixture';
-import { createArticle } from '../factories/article.factory';
+async fillEmail(email: string) { ... }
+async fillPassword(password: string) { ... }
+async clickSignInButton() { ... }
+```
 
-test.describe('Article Management', () => {
-  test('user can create article', async ({ page, authenticatedUser }) => {
-    // Test implementation using fixtures and factories
+**✅ Good:**
+```typescript
+async loginAs(user: UserData) {
+  await this.page.getByPlaceholder('Email').fill(user.email);
+  await this.page.getByPlaceholder('Password').fill(user.password);
+  await this.page.getByRole('button', { name: "Sign in" }).click();
+}
+```
+
+---
+
+## Test Data & Factories
+
+### User Factory Pattern
+
+```typescript
+// tests/factories/user.factory.ts
+export interface UserData {
+  username: string;
+  email: string;
+  password: string;
+}
+
+export function generateUniqueUser(): UserData {
+  const timestamp = Date.now();
+  const random = Math.random().toString(36).substring(7);
+  return {
+    username: `testuser_${timestamp}_${random}`,
+    email: `test_${timestamp}_${random}@example.com`,
+    password: 'TestPass123!',
+  };
+}
+
+export async function createUser(overrides: Partial<UserData> = {}): Promise<TestUser> {
+  // Creates user directly in database via Prisma
+  // Returns user with plainPassword for test login
+}
+
+export async function deleteUserByEmail(email: string) {
+  // Cleanup for parallel-safe test isolation
+}
+```
+
+### Fixture with Automatic Cleanup
+
+```typescript
+// tests/fixtures/auth.fixture.ts
+export const test = base.extend<{
+  testUser: UserData;
+  app: App;
+}>({
+  testUser: async ({}, use) => {
+    const user = await createUser();
+
+    await use({
+      username: user.username,
+      email: user.email,
+      password: user.plainPassword,
+    });
+
+    // Cleanup after test using unique email (parallel-safe)
+    await deleteUserByEmail(user.email);
+  },
+  app: async ({ page }, use) => {
+    await use(new App(page));
+  },
+});
+```
+
+---
+
+## Path Aliases
+
+**Always use path aliases for imports:**
+
+```typescript
+// ✅ Good
+import { test } from '@fixtures/auth.fixture';
+import { generateUniqueUser } from '@factories/user.factory';
+import { LoginPage } from '@pages/login.page';
+import { Header } from '@components/header.component';
+
+// ❌ Bad
+import { test } from '../fixtures/auth.fixture';
+import { generateUniqueUser } from '../factories/user.factory';
+```
+
+**Configured in tsconfig.json:**
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@fixtures/*": ["tests/fixtures/*"],
+      "@pages/*": ["tests/pages/*"],
+      "@components/*": ["tests/components/*"],
+      "@factories/*": ["tests/factories/*"],
+      "@data/*": ["tests/data/*"]
+    }
+  }
+}
+```
+
+---
+
+## Test Isolation Rules
+
+### 1. Each Test Creates Its Own Data
+
+**❌ Never assume data exists:**
+```typescript
+test('login works', async ({ app }) => {
+  await app.login.goto();
+  await app.login.loginAs({ email: 'existing@user.com', password: 'pass' });  // NO!
+});
+```
+
+**✅ Use fixture to create user:**
+```typescript
+test('login works', async ({ app, testUser }) => {
+  await app.login.goto();
+  await app.login.loginAs(testUser);
+  await app.home.isLoaded();
+});
+```
+
+### 2. Unique Data for Parallel Safety
+
+Always use `generateUniqueUser()` to avoid conflicts:
+
+```typescript
+test('registration', async ({ app }) => {
+  const userData = generateUniqueUser();  // Unique for this test
+  await app.login.goto();
+  await app.login.gotoNeedAnAccount();
+  await app.register.register(userData.username, userData.email, userData.password);
+  await app.home.isLoaded();
+});
+```
+
+### 3. Per-Test Cleanup (Not Global)
+
+**❌ Bad: Global cleanup that deletes all users**
+```typescript
+test.afterEach(async () => {
+  await deleteAllUsers();  // Breaks parallel tests!
+});
+```
+
+**✅ Good: Per-test cleanup via fixture**
+```typescript
+testUser: async ({}, use) => {
+  const user = await createUser();
+  await use({ ... });
+  await deleteUserByEmail(user.email);  // Only delete this test's user
+},
+```
+
+---
+
+## Component Pattern
+
+Components are for **global UI elements** that appear on multiple pages:
+
+```typescript
+// tests/components/header.component.ts
+export class Header {
+  constructor(private page: Page) {}
+
+  // State verification methods (NOT navigation)
+  async isLoggedIn(username: string) {
+    await expect(this.page.getByRole('link', { name: "Settings" })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: "New article" })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: username })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: "Sign in" })).not.toBeVisible();
+  }
+
+  async isLoggedOut() {
+    await expect(this.page.getByRole('link', { name: "Sign in" })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: "Sign up" })).toBeVisible();
+    await expect(this.page.getByRole('link', { name: "Settings" })).not.toBeVisible();
+  }
+}
+```
+
+**Components verify state. Pages perform actions.**
+
+---
+
+## Code Style Rules
+
+### 1. Minimal Comments
+
+**❌ Don't comment obvious code:**
+```typescript
+// Navigate to login page
+await app.login.goto();
+
+// Enter email and password
+await app.login.loginAs(testUser);
+
+// Check that we are logged in
+await app.header.isLoggedIn(testUser.username);
+```
+
+**✅ Code should be self-documenting:**
+```typescript
+await app.login.goto();
+await app.login.loginAs(testUser);
+await app.home.isLoaded();
+await app.header.isLoggedIn(testUser.username);
+```
+
+### 2. No Unused Code
+
+Remove any methods, imports, or files not used by current tests.
+
+### 3. Use `UserData` Type
+
+```typescript
+import type { UserData } from '@factories/user.factory';
+
+async loginAs(user: UserData) { ... }
+```
+
+### 4. Exact String Matches
+
+Use exact string matches for locators (not regex when exact works):
+
+```typescript
+// ✅ Good
+await this.page.getByRole('link', { name: "Settings" })
+
+// ❌ Overly complex
+await this.page.getByRole('link', { name: /^settings$/i })
+```
+
+---
+
+## Complete Working Example
+
+**Test file:**
+```typescript
+import { test } from '@fixtures/auth.fixture';
+import { generateUniqueUser } from '@factories/user.factory';
+
+test.describe('Registration', () => {
+  test('TC-001: Successful User Registration', async ({ app }) => {
+    const userData = generateUniqueUser();
+
+    await app.login.goto();
+    await app.login.gotoNeedAnAccount();
+    await app.register.register(userData.username, userData.email, userData.password);
+    await app.home.isLoaded();
+    await app.header.isLoggedIn(userData.username);
   });
 });
 ```
 
-## Verification Checklist — BEFORE Marking Complete
+**Supporting files:**
+- `tests/fixtures/auth.fixture.ts` — Provides `app` and `testUser`
+- `tests/pages/app.ts` — Combines all pages/components
+- `tests/pages/login.page.ts` — `goto()`, `isLoaded()`, `loginAs()`, `gotoNeedAnAccount()`
+- `tests/pages/register.page.ts` — `register()` method
+- `tests/pages/home.page.ts` — `isLoaded()` verification
+- `tests/components/header.component.ts` — `isLoggedIn()` state check
+- `tests/factories/user.factory.ts` — `generateUniqueUser()`, `createUser()`, `deleteUserByEmail()`
 
-**You MUST complete this checklist and run tests before considering the task done.**
+---
 
-### Step 1: Rule Compliance Verification
-Review the generated test file(s) and verify:
+## Agent Task Checklist
 
-- [ ] **Locator Priority**: All locators use `getByRole()` > `getByLabel()` > `getByPlaceholder()` > `getByText()` > `getByTestId()` (no CSS/XPath)
-- [ ] **Inline Locators**: Locators defined inside methods by default (only promoted to class fields if used 3+ times or tests need access)
-- [ ] **Meaningful Actions**: Methods represent user intent + verification (e.g., `proceedToCheckout()` not `clickCheckout()`)
-- [ ] **Web-First Assertions**: All assertions use `await expect(locator).toBeVisible()` not `expect(await locator.isVisible())`
-- [ ] **Typed Test Data**: Using interfaces/types for data, not primitive strings
-- [ ] **Test Isolation**: Test creates its own data (factory or UI setup) — never assumes pre-existing data
-- [ ] **Data Uniqueness**: Test data uses timestamps/random to avoid conflicts in parallel runs
-- [ ] **Cleanup Strategy**: Fixture teardown or `afterEach` cleanup is implemented
-- [ ] **Folder Structure**: Files placed in correct folders (components/, factories/, fixtures/, pages/, *.spec.ts)
-- [ ] **No Direct Page Access**: Tests interact through POMs/fixtures, not `page` directly
+When generating tests, verify:
+
+- [ ] **App Pattern**: All tests use `({ app, testUser })` fixture
+- [ ] **Strong Assertions**: Use `app.header.isLoggedIn()` not just URL checks
+- [ ] **Locator Priority**: `getByRole()` > `getByLabel()` > `getByPlaceholder()`
+- [ ] **Path Aliases**: Use `@fixtures/`, `@pages/`, `@components/`, `@factories/`
+- [ ] **Test Data**: Use `testUser` fixture or `generateUniqueUser()`
+- [ ] **Cleanup**: Per-test cleanup via fixture, not global `afterEach`
+- [ ] **Page Methods**: `goto()`, `isLoaded()`, and action methods like `loginAs()`
+- [ ] **No CSS Selectors**: Semantic locators only
+- [ ] **Minimal Comments**: Code is self-documenting
+- [ ] **User Intent**: Methods describe what user is doing, not technical steps

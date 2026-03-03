@@ -1,4 +1,5 @@
 import { Page, expect } from '@playwright/test';
+import type { UserData } from '@factories/user.factory';
 
 export class LoginPage {
   constructor(private page: Page) {}
@@ -12,10 +13,12 @@ export class LoginPage {
     await this.page.getByPlaceholder('Email').fill(email);
     await this.page.getByPlaceholder('Password').fill(password);
     await this.page.getByRole('button', { name: /sign in/i }).click();
+    // Wait for navigation to home page
+    await this.page.waitForURL('/', { timeout: 10000 });
   }
 
-  async expectLoginSuccess() {
-    await expect(this.page).toHaveURL('/');
+  async loginAs(user: UserData) {
+    await this.login(user.email, user.password);
   }
 
   async expectLoginError(message: string) {

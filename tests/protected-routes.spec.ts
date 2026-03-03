@@ -3,8 +3,11 @@ import { test, expect } from '@fixtures/auth.fixture';
 test.describe('Protected Routes', () => {
   test('TC-013: Access Settings Page When Authenticated', async ({ app, testUser, page }) => {
     await app.login.goto();
-    await app.login.login(testUser.email, testUser.password);
+    await app.login.loginAs(testUser);
+    // Verify logged in
     await expect(page).toHaveURL('/');
+    const token = await page.evaluate(() => localStorage.getItem('token'));
+    expect(token).not.toBeNull();
 
     await app.settings.goto();
     await expect(page).toHaveURL('/settings');

@@ -51,6 +51,15 @@ export class Header {
   }
 
   async expectLoggedIn(username: string) {
+    // Wait for auth state to settle (loading state resolves)
+    await this.page.waitForFunction(
+      () => {
+        const settings = document.querySelector('nav a[href="/settings"]');
+        const signIn = document.querySelector('nav a[href="/login"]');
+        return settings !== null || signIn !== null;
+      },
+      { timeout: 10000 }
+    );
     await expect(this.page.getByRole('link', { name: /^settings$/i })).toBeVisible();
     await expect(this.page.getByRole('link', { name: /new article/i })).toBeVisible();
     await expect(this.page.getByRole('link', { name: username })).toBeVisible();

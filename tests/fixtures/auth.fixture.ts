@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { createUser, deleteUserByEmail } from '@factories/user.factory';
-import { App } from '../app';
+import { App } from '@pages/app';
 
 export interface TestUser {
   username: string;

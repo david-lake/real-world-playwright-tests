@@ -5,6 +5,7 @@ export class SettingsPage {
 
   async goto() {
     await this.page.goto('/settings');
+    await this.isLoaded();
   }
 
   async isLoaded() {
@@ -13,5 +14,46 @@ export class SettingsPage {
 
   async logout() {
     await this.page.getByRole('button', { name: /click here to logout/i }).click();
+  }
+
+  async updateProfile(settings: {
+    username?: string;
+    email?: string;
+    password?: string;
+    bio?: string;
+    image?: string;
+  }) {
+    if (settings.username !== undefined) {
+      await this.page.getByPlaceholder('Username').fill(settings.username);
+    }
+    if (settings.email !== undefined) {
+      await this.page.getByPlaceholder('Email').fill(settings.email);
+    }
+    if (settings.password !== undefined) {
+      await this.page.getByPlaceholder('New Password').fill(settings.password);
+    }
+    if (settings.bio !== undefined) {
+      await this.page.getByPlaceholder('Short bio about you').fill(settings.bio);
+    }
+    if (settings.image !== undefined) {
+      await this.page.getByPlaceholder('URL of profile picture').fill(settings.image);
+    }
+    await this.page.getByRole('button', { name: /update settings/i }).click();
+  }
+
+  async getErrorMessage() {
+    await expect(this.page.locator('.error-messages')).toBeVisible();
+    return this.page.locator('.error-messages').textContent();
+  }
+
+  async getSuccessMessage() {
+    const successAlert = this.page.locator('[role="alert"].my-2.h-10');
+    await expect(successAlert).toBeVisible();
+    return successAlert.textContent();
+  }
+
+  async waitForUpdateSuccess() {
+    const successAlert = this.page.locator('[role="alert"].my-2.h-10');
+    await expect(successAlert).toBeVisible();
   }
 }

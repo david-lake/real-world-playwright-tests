@@ -5,7 +5,6 @@ export class SettingsPage {
 
   async goto() {
     await this.page.goto('/settings');
-    await this.isLoaded();
   }
 
   async isLoaded() {

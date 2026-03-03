@@ -1,5 +1,5 @@
 import { test as base, expect } from '@playwright/test';
-import { createUser, deleteAllTestUsers } from '@factories/user.factory';
+import { createUser, deleteAllUsers } from '@factories/user.factory';
 import { App } from '@pages/app';
 
 export interface TestUser {
@@ -29,7 +29,7 @@ export const test = base.extend<{
 
 // Global cleanup: runs after every test to ensure isolation
 test.afterEach(async () => {
-  await deleteAllTestUsers();
+  await deleteAllUsers();
 });
 
 export { expect };

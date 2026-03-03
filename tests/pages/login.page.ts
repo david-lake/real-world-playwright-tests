@@ -6,6 +6,10 @@ export class LoginPage {
 
   async goto() {
     await this.page.goto('/login');
+    await this.isLoaded();
+  }
+
+  async isLoaded() {
     await expect(this.page.getByRole('heading', { name: /sign in/i })).toBeVisible();
   }
 
@@ -13,10 +17,6 @@ export class LoginPage {
     await this.page.getByPlaceholder('Email').fill(user.email);
     await this.page.getByPlaceholder('Password').fill(user.password);
     await this.page.getByRole('button', { name: "Sign in" }).click();
-  }
-
-  async expectLoginError(message: string) {
-    await expect(this.page.getByText(message)).toBeVisible();
   }
 
   async gotoNeedAnAccount() {

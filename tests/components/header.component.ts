@@ -8,38 +8,6 @@ import { Page, expect } from '@playwright/test';
 export class Header {
   constructor(private page: Page) {}
 
-  // --- Navigation Actions (Guest) ---
-
-  async clickSignIn() {
-    await this.page.getByRole('link', { name: /sign in/i }).click();
-  }
-
-  async clickSignUp() {
-    await this.page.getByRole('link', { name: /sign up/i }).click();
-  }
-
-  async clickHome() {
-    await this.page.getByRole('link', { name: /^home$/i }).click();
-  }
-
-  async clickLogo() {
-    await this.page.getByRole('link', { name: /conduit/i }).click();
-  }
-
-  // --- Navigation Actions (Authenticated) ---
-
-  async clickNewArticle() {
-    await this.page.getByRole('link', { name: /new article/i }).click();
-  }
-
-  async clickSettings() {
-    await this.page.getByRole('link', { name: /^settings$/i }).click();
-  }
-
-  async clickProfile(username: string) {
-    await this.page.getByRole('link', { name: username }).click();
-  }
-
   // --- State Verification ---
 
   async isLoggedIn(username: string) {

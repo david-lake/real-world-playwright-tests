@@ -52,12 +52,10 @@ export default defineConfig({
   ],
 
   // Run local dev server before starting the tests
-  // Uses env-cmd to load .env file
-  /**
   webServer: {
     command: 'yarn dev',
     url: 'http://localhost:3000',
-    reuseExistingServer: false,
+    reuseExistingServer: !process.env.CI,
     timeout: 120000,
-  },*/
+  },
 });

@@ -12,7 +12,6 @@ test.describe('Registration', () => {
     // After registration, router.back() goes to login page - navigate to home
     await page.goto('/');
     await app.register.expectRegistrationSuccess();
-    // Cleanup handled by global afterEach
   });
 
   test('TC-007: Guest-Only Restriction on Registration Page', async ({ app, testUser, page }) => {

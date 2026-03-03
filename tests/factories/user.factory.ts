@@ -14,8 +14,8 @@ export interface UserData {
   username: string;
   email: string;
   password: string;
-  bio?: string;
-  image?: string;
+  bio?: string | null;
+  image?: string | null;
 }
 
 /**
@@ -24,6 +24,8 @@ export interface UserData {
 export interface TestUser extends UserData {
   id: number;
   plainPassword: string;
+  bio?: string | null;
+  image?: string | null;
 }
 
 export function generateUniqueUser(): UserData {
@@ -57,4 +59,11 @@ export async function createUser(overrides: Partial<UserData> = {}): Promise<Tes
  */
 export async function deleteAllUsers() {
   await prisma.user.deleteMany();
+}
+
+/**
+ * Delete a user by email address
+ */
+export async function deleteUserByEmail(email: string) {
+  await prisma.user.deleteMany({ where: { email } });
 }

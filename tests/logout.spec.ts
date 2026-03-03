@@ -1,6 +1,6 @@
 import { test, expect } from '@fixtures/auth.fixture';
 
-test.describe('User Logout', () => {
+test.describe('Logout', () => {
   test('TC-021: Successful Logout', async ({ app, testUser, page }) => {
     await app.nav.gotoLogin();
     await app.login.login(testUser.email, testUser.password);

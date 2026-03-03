@@ -1,6 +1,6 @@
 import { test, expect } from '@fixtures/auth.fixture';
 
-test.describe('User Login', () => {
+test.describe('Login', () => {
   test('TC-008: Successful Login with Email and Password', async ({ app, testUser }) => {
     await app.login.goto();
     await app.login.login(testUser.email, testUser.password);

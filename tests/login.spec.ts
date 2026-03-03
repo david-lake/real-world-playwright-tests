@@ -8,7 +8,7 @@ test.describe('Login', () => {
   });
 
   test('TC-012: Guest-Only Restriction on Login Page', async ({ app, testUser, page }) => {
-    await app.nav.gotoLogin();
+    await app.login.goto();
     await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 

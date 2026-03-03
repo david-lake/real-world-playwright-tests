@@ -2,7 +2,7 @@ import { test, expect } from '@fixtures/auth.fixture';
 
 test.describe('Logout', () => {
   test('TC-021: Successful Logout', async ({ app, testUser, page }) => {
-    await app.nav.gotoLogin();
+    await app.login.goto();
     await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 
@@ -15,7 +15,7 @@ test.describe('Logout', () => {
   });
 
   test('TC-022: Token Removed After Logout', async ({ app, testUser, page }) => {
-    await app.nav.gotoLogin();
+    await app.login.goto();
     await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 

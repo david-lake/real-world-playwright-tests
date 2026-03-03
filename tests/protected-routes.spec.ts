@@ -2,7 +2,7 @@ import { test, expect } from '@fixtures/auth.fixture';
 
 test.describe('Protected Routes', () => {
   test('TC-013: Access Settings Page When Authenticated', async ({ app, testUser, page }) => {
-    await app.nav.gotoLogin();
+    await app.login.goto();
     await app.login.login(testUser.email, testUser.password);
     await expect(page).toHaveURL('/');
 

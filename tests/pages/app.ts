@@ -17,7 +17,7 @@ export class App {
   readonly home: HomePage;
   readonly header: Header;
 
-  constructor(readonly page: Page) {
+  constructor(page: Page) {
     this.page = page;
     this.login = new LoginPage(page);
     this.register = new RegisterPage(page);

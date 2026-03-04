@@ -20,42 +20,31 @@ export class RegisterPage {
   }
 
   async getErrorMessage() {
-    // Wait for either form validation errors or server error alert
     await this.page.waitForLoadState('networkidle');
 
-    // First check for field-level error messages
-    const errorMessages = this.page.locator('p.text-red-600');
-    const count = await errorMessages.count();
+    // Check for server error alert (role="alert")
+    const alert = this.page.getByRole('alert');
+    const alertCount = await alert.count();
 
-    if (count > 0) {
-      for (let i = 0; i < count; i++) {
-        const text = await errorMessages.nth(i).textContent();
-        if (text && text.trim()) {
-          return text.trim();
+    if (alertCount > 0) {
+      // Filter to only visible alerts (not sr-only/announcer)
+      for (let i = 0; i < alertCount; i++) {
+        const locator = alert.nth(i);
+        if (await locator.isVisible()) {
+          const text = await locator.textContent();
+          if (text && text.trim()) {
+            return text.trim();
+          }
         }
-      }
-    }
-
-    // Check for server error alert - use more specific locator (exclude route announcer)
-    const alert = this.page.locator('[role="alert"].my-2');
-    if (await alert.count() > 0) {
-      const text = await alert.textContent();
-      if (text && text.trim()) {
-        return text.trim();
       }
     }
 
     // Check URL - if redirected to home, registration succeeded (which shouldn't happen with duplicate)
     const url = this.page.url();
     if (url.includes('/') && !url.includes('/register')) {
-      return ''; // Registration succeeded unexpectedly
+      return '';
     }
 
     return '';
-  }
-
-  async gotoHaveAnAccount() {
-    await this.page.getByRole('link', { name: /have an account?/i }).click();
-    await expect(this.page).toHaveURL('/login');
   }
 }

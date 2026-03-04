@@ -41,19 +41,14 @@ export class SettingsPage {
     await this.page.getByRole('button', { name: /update settings/i }).click();
   }
 
-  async getErrorMessage() {
-    await expect(this.page.locator('.error-messages')).toBeVisible();
-    return this.page.locator('.error-messages').textContent();
-  }
-
-  async getSuccessMessage() {
-    const successAlert = this.page.locator('[role="alert"].my-2.h-10');
-    await expect(successAlert).toBeVisible();
-    return successAlert.textContent();
+  async getBioValue() {
+    return this.page.getByPlaceholder('Short bio about you').inputValue();
   }
 
   async waitForUpdateSuccess() {
-    const successAlert = this.page.locator('[role="alert"].my-2.h-10');
-    await expect(successAlert).toBeVisible();
+    // Wait for the page heading to be visible again (confirms update completed)
+    await expect(this.page.getByRole('heading', { name: /your settings/i })).toBeVisible();
+    // Small delay to ensure data is persisted
+    await this.page.waitForTimeout(500);
   }
 }

@@ -6,7 +6,7 @@
 
 **Example of the final style:**
 ```typescript
-test('TC-008: Successful login with valid email and password', async ({ app, testUser }) => {
+test('Successful login with valid email and password', async ({ app, testUser }) => {
   await app.login.goto();
   await app.login.loginAs(testUser);
   await app.home.isLoaded();
@@ -85,7 +85,7 @@ export class App {
 Every authentication test follows this pattern:
 
 ```typescript
-test('TC-XXX: Clear description of what user is doing', async ({ app, testUser }) => {
+test('Clear description of what user is doing', async ({ app, testUser }) => {
   // 1. Navigate to starting page
   await app.login.goto();
 
@@ -164,7 +164,6 @@ export class LoginPage {
 
   async goto() {
     await this.page.goto('/login');
-    await this.isLoaded();  // Verify we actually landed
   }
 
   async isLoaded() {
@@ -315,14 +314,15 @@ test('login works', async ({ app, testUser }) => {
 
 ### 2. Unique Data for Parallel Safety
 
-Always use `generateUniqueUser()` to avoid conflicts:
+Always use random data generators like `generateUniqueUser()` to avoid conflicts:
 
 ```typescript
 test('registration', async ({ app }) => {
-  const userData = generateUniqueUser();  // Unique for this test
+  const newUser = generateUniqueUser();  // Unique for this test
+
   await app.login.goto();
   await app.login.gotoNeedAnAccount();
-  await app.register.register(userData.username, userData.email, userData.password);
+  await app.register.register(newUser.username, newUser.email, newUser.password);
   await app.home.isLoaded();
 });
 ```
@@ -434,7 +434,7 @@ import { test } from '@fixtures/auth.fixture';
 import { generateUniqueUser } from '@factories/user.factory';
 
 test.describe('Registration', () => {
-  test('TC-001: Successful User Registration', async ({ app }) => {
+  test('Successful User Registration', async ({ app }) => {
     const userData = generateUniqueUser();
 
     await app.login.goto();

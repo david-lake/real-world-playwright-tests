@@ -11,12 +11,12 @@ test.describe('Protected Routes', () => {
     await app.settings.isLoaded();
   });
 
-  test('TC-014: Access settings page when not authenticated', async ({ app, page }) => {
+  test('TC-014: Access settings page when not authenticated', async ({ app }) => {
     // Navigate to settings - unauthenticated users should be redirected to login
-    await page.goto('/settings');
+    await app.page.goto('/settings');
 
     // Wait for redirect to login page
-    await expect(page).toHaveURL(/.*\/login/, { timeout: 10000 });
+    await expect(app.page).toHaveURL(/.*\/login/, { timeout: 10000 });
     await app.login.isLoaded();
   });
 

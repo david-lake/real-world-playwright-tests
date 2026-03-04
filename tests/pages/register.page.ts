@@ -19,32 +19,10 @@ export class RegisterPage {
     await this.page.getByRole('button', { name: /sign up/i }).click();
   }
 
-  async getErrorMessage() {
-    await this.page.waitForLoadState('networkidle');
-
-    // Check for server error alert (role="alert")
+  async getErrorMessage(): Promise<string> {
     const alert = this.page.getByRole('alert');
-    const alertCount = await alert.count();
-
-    if (alertCount > 0) {
-      // Filter to only visible alerts (not sr-only/announcer)
-      for (let i = 0; i < alertCount; i++) {
-        const locator = alert.nth(i);
-        if (await locator.isVisible()) {
-          const text = await locator.textContent();
-          if (text && text.trim()) {
-            return text.trim();
-          }
-        }
-      }
-    }
-
-    // Check URL - if redirected to home, registration succeeded (which shouldn't happen with duplicate)
-    const url = this.page.url();
-    if (url.includes('/') && !url.includes('/register')) {
-      return '';
-    }
-
-    return '';
+    await expect(alert).toBeVisible();
+    const text = await alert.textContent();
+    return text?.trim() || '';
   }
 }

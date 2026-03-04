@@ -12,7 +12,7 @@ test.describe('Logout', () => {
     await app.header.isLoggedOut();
   });
 
-  test('TC-022: Token removed after logout', async ({ app, testUser, page }) => {
+  test('TC-022: Token removed after logout', async ({ app, testUser }) => {
     await app.login.goto();
     await app.login.loginAs(testUser);
     await app.home.isLoaded();
@@ -20,23 +20,17 @@ test.describe('Logout', () => {
 
     await app.settings.goto();
 
-    const storageStateBefore = await page.evaluate(() => ({
-      token: localStorage.getItem('token'),
-    }));
-    expect(storageStateBefore.token).toBeTruthy();
+    // Verify token exists before logout
+    const tokenBefore = await app.settings.getAuthToken();
+    expect(tokenBefore).toBeTruthy();
 
-    await page.getByRole('button', { name: /click here to logout/i }).click();
+    await app.settings.logout();
 
-    await page.waitForTimeout(500);
+    // Verify logged out state via UI (primary assertion)
+    await app.header.isLoggedOut();
 
-    const storageStateAfter = await page.evaluate(() => ({
-      token: localStorage.getItem('token'),
-    }));
-
-    const isTokenRemoved = !storageStateAfter.token ||
-                           storageStateAfter.token === '' ||
-                           storageStateAfter.token === 'null' ||
-                           storageStateAfter.token === '""';
-    expect(isTokenRemoved).toBeTruthy();
+    // Verify token removed (secondary assertion)
+    const tokenAfter = await app.settings.getAuthToken();
+    expect(tokenAfter).toBeFalsy();
   });
 });

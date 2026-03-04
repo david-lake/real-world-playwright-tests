@@ -23,4 +23,8 @@ export class LoginPage {
     await this.page.getByRole('link', { name: /need an account?/i }).click();
     await expect(this.page).toHaveURL('/register');
   }
+
+  async expectError(message: string) {
+    await expect(this.page.getByText(message)).toBeVisible();
+  }
 }

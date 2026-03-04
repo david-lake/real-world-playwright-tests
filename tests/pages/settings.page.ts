@@ -5,10 +5,23 @@ export class SettingsPage {
 
   async goto() {
     await this.page.goto('/settings');
+    await this.isLoaded();
   }
 
   async isLoaded() {
     await expect(this.page.getByRole('heading', { name: /your settings/i })).toBeVisible();
+  }
+
+  async updateBio(bio: string) {
+    await this.page.getByPlaceholder('Short bio about you').fill(bio);
+  }
+
+  async submit() {
+    await this.page.getByRole('button', { name: 'Update Settings' }).click();
+  }
+
+  async expectBio(bio: string) {
+    await expect(this.page.getByPlaceholder('Short bio about you')).toHaveValue(bio);
   }
 
   async logout() {

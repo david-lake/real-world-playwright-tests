@@ -18,4 +18,8 @@ export class RegisterPage {
     await this.page.getByPlaceholder('Password').fill(password);
     await this.page.getByRole('button', { name: /sign up/i }).click();
   }
+
+  async expectError(message: string) {
+    await expect(this.page.getByText(message)).toBeVisible();
+  }
 }

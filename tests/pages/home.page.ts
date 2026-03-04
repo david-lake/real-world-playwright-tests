@@ -8,11 +8,10 @@ export class HomePage {
 
   async goto() {
     await this.page.goto('/');
-    await this.isLoaded();
   }
 
   async isLoaded() {
-    await expect(this.page.getByRole('heading', { name: /conduit/i })).toBeVisible();
-    await expect(this.page.getByText(/a place to share your knowledge/i)).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Conduit' })).toBeVisible();
+    await expect(this.page.getByText('a place to share your knowledge')).toBeVisible();
   }
 }

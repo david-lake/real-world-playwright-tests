@@ -10,13 +10,15 @@ import { Header } from '@components/header.component';
  * Provides a unified interface for test interactions.
  */
 export class App {
+  readonly page: Page;
   readonly login: LoginPage;
   readonly register: RegisterPage;
   readonly settings: SettingsPage;
   readonly home: HomePage;
   readonly header: Header;
 
-  constructor(readonly page: Page) {
+  constructor(page: Page) {
+    this.page = page;
     this.login = new LoginPage(page);
     this.register = new RegisterPage(page);
     this.settings = new SettingsPage(page);

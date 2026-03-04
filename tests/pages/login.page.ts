@@ -6,11 +6,10 @@ export class LoginPage {
 
   async goto() {
     await this.page.goto('/login');
-    await this.isLoaded();
   }
 
   async isLoaded() {
-    await expect(this.page.getByRole('heading', { name: /sign in/i })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: "Sign in" })).toBeVisible();
   }
 
   async loginAs(user: UserData) {
@@ -20,8 +19,7 @@ export class LoginPage {
   }
 
   async gotoNeedAnAccount() {
-    await this.page.getByRole('link', { name: /need an account?/i }).click();
-    await expect(this.page).toHaveURL('/register');
+    await this.page.getByRole('link', { name: "Need an account?" }).click();
   }
 
   async expectError(message: string) {

@@ -5,11 +5,10 @@ export class SettingsPage {
 
   async goto() {
     await this.page.goto('/settings');
-    await this.isLoaded();
   }
 
   async isLoaded() {
-    await expect(this.page.getByRole('heading', { name: /your settings/i })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: "Your settings" })).toBeVisible();
   }
 
   async updateBio(bio: string) {

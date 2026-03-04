@@ -3,62 +3,46 @@ import { UserData, generateUniqueUser, createUser, deleteUserByEmail } from '@fa
 
 test.describe('Authentication', () => {
   test.describe('Registration', () => {
-    test('TC-001: Successful user registration', async ({ app }) => {
-      const userData = generateUniqueUser();
+    test('Successful user registration', async ({ app }) => {
+      const newUser = generateUniqueUser();
 
       await app.login.goto();
       await app.login.gotoNeedAnAccount();
-      await app.register.register(userData.username, userData.email, userData.password);
+      await app.register.register(newUser.username, newUser.email, newUser.password);
       await app.home.isLoaded();
-      await app.header.isLoggedIn(userData.username);
+      await app.header.isLoggedIn(newUser.username);
     });
 
-    test('TC-002: Registration with duplicate username', async ({ app }) => {
-      const existingUsername = 'existinguser';
-      const existingEmail = 'existing@example.com';
-      const userData = generateUniqueUser();
-
-      await createUser({
-        username: existingUsername,
-        email: existingEmail,
-        password: 'TestPass123',
-      });
+    test('Registration with duplicate username', async ({ app, testUser }) => {
+      const newUser = generateUniqueUser();
 
       await app.register.goto();
-      await app.register.register(existingUsername, userData.email, userData.password);
+      await app.register.register(testUser.username, newUser.email, newUser.password);
+      await app.register.isLoaded();
       await app.register.expectError('Username or email had been used');
-
-      await deleteUserByEmail(existingEmail);
+      await app.header.isLoggedOut();
     });
 
-    test('TC-003: Registration with duplicate email', async ({ app }) => {
-      const existingUsername = 'testuser';
-      const existingEmail = 'test@example.com';
-      const userData = generateUniqueUser();
-
-      await createUser({
-        username: existingUsername,
-        email: existingEmail,
-        password: 'TestPass123',
-      });
+    test('Registration with duplicate email', async ({ app, testUser }) => {
+      const newUser = generateUniqueUser();
 
       await app.register.goto();
-      await app.register.register(userData.username, existingEmail, userData.password);
+      await app.register.register(newUser.username, testUser.email, newUser.password);
+      await app.register.isLoaded();
       await app.register.expectError('Username or email had been used');
-
-      await deleteUserByEmail(existingEmail);
+      await app.header.isLoggedOut();
     });
   });
 
   test.describe('Login', () => {
-    test('TC-008: Successful login with valid email and password', async ({ app, testUser }) => {
+    test('Successful login with valid email and password', async ({ app, testUser }) => {
       await app.login.goto();
       await app.login.loginAs(testUser);
       await app.home.isLoaded();
       await app.header.isLoggedIn(testUser.username);
     });
 
-    test('TC-009: Login with invalid password', async ({ app, testUser }) => {
+    test('Login with invalid password', async ({ app, testUser }) => {
       const invalidPasswordUser: UserData = {
         ...testUser,
         password: 'WrongPass123!',
@@ -66,11 +50,12 @@ test.describe('Authentication', () => {
 
       await app.login.goto();
       await app.login.loginAs(invalidPasswordUser);
+      await app.login.isLoaded();
       await app.login.expectError('Bad Credentials');
       await app.header.isLoggedOut();
     });
 
-    test('TC-010: Login with non-existent email', async ({ app }) => {
+    test('Login with non-existent email', async ({ app }) => {
       const nonExistentUser: UserData = {
         username: 'nonexistent-user',
         email: `nonexistent-${Date.now()}@example.com`,
@@ -79,11 +64,12 @@ test.describe('Authentication', () => {
 
       await app.login.goto();
       await app.login.loginAs(nonExistentUser);
+      await app.login.isLoaded();
       await app.login.expectError('Bad Credentials');
       await app.header.isLoggedOut();
     });
 
-    test('TC-023: Session persists on page refresh', async ({ app, testUser, page }) => {
+    test('Session persists on page refresh', async ({ app, testUser, page }) => {
       await app.login.goto();
       await app.login.loginAs(testUser);
       await app.home.isLoaded();
@@ -97,7 +83,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Logout', () => {
-    test('TC-021: Successful logout', async ({ app, testUser }) => {
+    test('Successful logout', async ({ app, testUser }) => {
       await app.login.goto();
       await app.login.loginAs(testUser);
       await app.home.isLoaded();
@@ -110,7 +96,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Protected Routes', () => {
-    test('TC-013: Access settings page when authenticated', async ({ app, testUser }) => {
+    test('Access settings page when authenticated', async ({ app, testUser }) => {
       await app.login.goto();
       await app.login.loginAs(testUser);
       await app.home.isLoaded();
@@ -120,7 +106,7 @@ test.describe('Authentication', () => {
       await app.settings.isLoaded();
     });
 
-    test('TC-014: Access settings page when not authenticated', async ({ app }) => {
+    test('Access settings page when not authenticated', async ({ app }) => {
       await app.settings.goto();
       await app.login.isLoaded();
     });

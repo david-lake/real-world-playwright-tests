@@ -9,7 +9,7 @@ export class LoginPage {
   }
 
   async isLoaded() {
-    await expect(this.page.getByRole('heading', { name: "Sign in" })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   }
 
   async loginAs(user: UserData) {
@@ -19,7 +19,7 @@ export class LoginPage {
   }
 
   async gotoNeedAnAccount() {
-    await this.page.getByRole('link', { name: "Need an account?" }).click();
+    await this.page.getByRole('link', { name: 'Need an account?' }).click();
   }
 
   async expectError(message: string) {

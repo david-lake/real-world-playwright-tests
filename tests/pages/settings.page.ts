@@ -8,7 +8,7 @@ export class SettingsPage {
   }
 
   async isLoaded() {
-    await expect(this.page.getByRole('heading', { name: "Your settings" })).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Your settings' })).toBeVisible();
   }
 
   async updateBio(bio: string) {
@@ -24,6 +24,6 @@ export class SettingsPage {
   }
 
   async logout() {
-    await this.page.getByRole('button', { name: /click here to logout/i }).click();
+    await this.page.getByRole('button', { name: 'Click here to logout' }).click();
   }
 }

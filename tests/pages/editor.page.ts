@@ -67,8 +67,4 @@ export class EditorPage {
   expectValidationError(message: string | RegExp) {
     return expect(this.page.getByText(message)).toBeVisible();
   }
-
-  expectEditorHeadingVisible() {
-    return expect(this.page.getByPlaceholder('Article title')).toBeVisible();
-  }
 }

@@ -28,7 +28,7 @@ test.describe('Article', () => {
       await expect(app.page).toHaveURL(/\/article\//);
     });
 
-    test('AT-002: Article creation validation errors', async ({ app, testUser }) => {
+    test('Article creation validation errors', async ({ app, testUser }) => {
       await app.login.goto();
       await app.login.loginAs(testUser);
       await app.home.isLoaded();
@@ -47,8 +47,8 @@ test.describe('Article', () => {
     });
   });
 
-  test.describe('Article Editing', () => {
-    test('AT-003: Edit own article successfully', async ({ app, testUser }) => {
+  test.describe('Editing', () => {
+    test('Edit own article successfully', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
       const updatedTitle = `Updated ${articleData.title}`;
       const updatedBody = `Updated body ${Date.now()}`;
@@ -75,8 +75,8 @@ test.describe('Article', () => {
     });
   });
 
-  test.describe('Favouriting Articles', () => {
-    test('AT-006: Favourite and unfavourite article from global feed', async ({ app, testUser }) => {
+  test.describe('Favouriting', () => {
+    test('Favourite and unfavourite article from global feed', async ({ app, testUser }) => {
       const author = await createUser();
       const articleData = generateUniqueArticle();
       const created = await createArticle(author.id, articleData);
@@ -106,8 +106,8 @@ test.describe('Article', () => {
     });
   });
 
-  test.describe('Commenting on Articles', () => {
-    test('AT-007: Add comment to article', async ({ app, testUser }) => {
+  test.describe('Commenting', () => {
+    test('Add comment to article', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
       const commentText = `Test comment ${Date.now()}`;
 
@@ -128,8 +128,8 @@ test.describe('Article', () => {
     });
   });
 
-  test.describe('Article Deletion', () => {
-    test('AT-005: Delete own article', async ({ app, testUser }) => {
+  test.describe('Deletion', () => {
+    test('Delete own article', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
 
       await app.login.goto();
@@ -151,8 +151,8 @@ test.describe('Article', () => {
     });
   });
 
-  test.describe('Article Listing & Filters', () => {
-    test('AT-009: Article appears in global feed after creation', async ({ app, testUser }) => {
+  test.describe('Listing & Filters', () => {
+    test('Article appears in global feed after creation', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
 
       await app.login.goto();

@@ -266,12 +266,12 @@ This test plan covers article creation, editing, deletion, favouriting, and comm
 
 ## Priority Matrix
 
-| Priority | Test Cases |
-|----------|-----------|
-| P0 (Critical) | AT-001, AT-005, AT-009 |
-| P1 (High) | AT-003, AT-006, AT-007 |
-| P2 (Medium) | AT-002, AT-004, AT-010 |
-| P3 (Low) | AT-008 |
+| Priority    | Tests                          | Rationale                                    |
+| ----------- | ------------------------------ | -------------------------------------------- |
+| P0 Critical | AT-001, AT-004, AT-005, AT-009 | Core CRUD + security boundaries + visibility |
+| P1 High     | AT-002, AT-003, AT-006, AT-007 | Edit, validation, engagement features        |
+| P2 Medium   | AT-008, AT-010                 | Auth boundaries (less critical), filtering   |
+| P3 Low      | (none)                         | —                                            |
 
 ---
 

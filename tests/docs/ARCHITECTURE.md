@@ -451,9 +451,12 @@ test.describe('Registration', () => {
 - `tests/pages/app.ts` — Combines all pages/components
 - `tests/pages/login.page.ts` — `goto()`, `isLoaded()`, `loginAs()`, `gotoNeedAnAccount()`
 - `tests/pages/register.page.ts` — `register()` method
-- `tests/pages/home.page.ts` — `isLoaded()` verification
+- `tests/pages/home.page.ts` — `isLoaded()`, `expectArticleInGlobalFeed()`, `expectArticleNotInFeed()`, `getArticleCard()`, `clickTag()`
+- `tests/pages/editor.page.ts` — `goto()`, `isLoaded()`, `createArticle()`, `updateArticle()`, `expectValidationError()`
+- `tests/pages/article.page.ts` — `goto(slug)`, `isLoaded()`, `expectTitle()`, `expectBodyContains()`, `clickEdit()`, `clickDelete()`, `postComment()`, etc.
 - `tests/components/header.component.ts` — `isLoggedIn()` state check
 - `tests/factories/user.factory.ts` — `generateUniqueUser()`, `createUser()`, `deleteUserByEmail()`
+- `tests/factories/article.factory.ts` — `ArticleData`, `generateUniqueArticle()`, `createArticle()`, `deleteArticleBySlug()`
 
 ---
 

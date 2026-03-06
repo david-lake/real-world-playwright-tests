@@ -6,14 +6,18 @@ import { generateUniqueArticle, createArticle, deleteArticleBySlug } from '@fact
 import { createUser, deleteUserByEmail } from '@factories/user.factory';
 
 test.describe('Article', () => {
+
+  test.beforeEach(async ({ app, testUser }) => {
+    // Runs before each test and signs in each page.
+    await app.login.goto();
+    await app.login.loginAs(testUser);
+    await app.home.isLoaded();
+    await app.header.isLoggedIn(testUser.username);
+  });
+
   test.describe('Creation', () => {
     test('Successful article creation', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
-
-      await app.login.goto();
-      await app.login.loginAs(testUser);
-      await app.home.isLoaded();
-      await app.header.isLoggedIn(testUser.username);
 
       await app.page.getByRole('link', { name: 'New article' }).click();
       await app.editor.isLoaded();
@@ -29,10 +33,6 @@ test.describe('Article', () => {
     });
 
     test('Article creation validation errors', async ({ app, testUser }) => {
-      await app.login.goto();
-      await app.login.loginAs(testUser);
-      await app.home.isLoaded();
-
       await app.page.getByRole('link', { name: 'New article' }).click();
       await app.editor.isLoaded();
 
@@ -52,10 +52,6 @@ test.describe('Article', () => {
       const articleData = generateUniqueArticle();
       const updatedTitle = `Updated ${articleData.title}`;
       const updatedBody = `Updated body ${Date.now()}`;
-
-      await app.login.goto();
-      await app.login.loginAs(testUser);
-      await app.home.isLoaded();
 
       await app.page.getByRole('link', { name: 'New article' }).click();
       await app.editor.isLoaded();
@@ -82,9 +78,6 @@ test.describe('Article', () => {
       const created = await createArticle(author.id, articleData);
 
       try {
-        await app.login.goto();
-        await app.login.loginAs(testUser);
-        await app.home.isLoaded();
         await app.home.goto();
         await app.home.clickGlobalFeed();
 
@@ -111,10 +104,6 @@ test.describe('Article', () => {
       const articleData = generateUniqueArticle();
       const commentText = `Test comment ${Date.now()}`;
 
-      await app.login.goto();
-      await app.login.loginAs(testUser);
-      await app.home.isLoaded();
-
       await app.page.getByRole('link', { name: 'New article' }).click();
       await app.editor.isLoaded();
       await app.editor.createArticle(articleData);
@@ -131,10 +120,6 @@ test.describe('Article', () => {
   test.describe('Deletion', () => {
     test('Delete own article', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
-
-      await app.login.goto();
-      await app.login.loginAs(testUser);
-      await app.home.isLoaded();
 
       await app.page.getByRole('link', { name: 'New article' }).click();
       await app.editor.isLoaded();
@@ -154,10 +139,6 @@ test.describe('Article', () => {
   test.describe('Listing & Filters', () => {
     test('Article appears in global feed after creation', async ({ app, testUser }) => {
       const articleData = generateUniqueArticle();
-
-      await app.login.goto();
-      await app.login.loginAs(testUser);
-      await app.home.isLoaded();
 
       await app.page.getByRole('link', { name: 'New article' }).click();
       await app.editor.isLoaded();

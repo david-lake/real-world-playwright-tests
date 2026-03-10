@@ -63,20 +63,16 @@ test.describe('Article', () => {
     test('Favourite and unfavourite article from global feed', async ({ app }) => {
       const author = await createUser();
       const article = await createArticle(author.id);
-
+    
       await app.home.gotoGlobalFeed();
-
-      const card = app.home.getArticleCard(article.title);
-      const favouriteBtn = card.getByRole('button', { name: 'Toggle Favorite' });
-
-      const initialText = (await favouriteBtn.innerText()).trim();
-      const initialCount = Number((initialText.match(/(\d+)\s*$/) ?? [])[1] ?? NaN);
-      expect(Number.isFinite(initialCount)).toBeTruthy();
-
-      await favouriteBtn.click();
-      await expect(favouriteBtn).toContainText(String(initialCount + 1));
-      await favouriteBtn.click();
-      await expect(favouriteBtn).toContainText(String(initialCount));
+    
+      const initialCount = await app.home.getFavouriteCount(article.title);
+    
+      await app.home.favouriteArticle(article.title);
+      await app.home.expectFavouriteCount(article.title, initialCount + 1);
+    
+      await app.home.unfavouriteArticle(article.title);
+      await app.home.expectFavouriteCount(article.title, initialCount);
     });
   });
 

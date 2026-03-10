@@ -28,9 +28,29 @@ export class HomePage {
     await expect(this.page.getByRole('link', { name: articleTitle })).not.toBeVisible();
   }
 
-  getArticleCard(articleTitle: string) {
-    return this.page
-      .locator('li', { has: this.page.getByRole('link', { name: articleTitle }) })
-      .first();
+  getArticleCard(title: string) {
+    return this.page.locator('li', { has: this.page.getByRole('link', { name: title }) });
+  }
+  
+  favouriteButton(title: string) {
+    return this.getArticleCard(title).getByRole('button', { name: 'Toggle Favorite' });
+  }
+  
+  async getFavouriteCount(title: string) {
+    const text = (await this.favouriteButton(title).innerText()).trim();
+    const match = text.match(/(\d+)\s*$/);
+    return Number(match?.[1] ?? 0);
+  }
+  
+  async favouriteArticle(title: string) {
+    await this.favouriteButton(title).click();
+  }
+  
+  async unfavouriteArticle(title: string) {
+    await this.favouriteButton(title).click();
+  }
+  
+  async expectFavouriteCount(title: string, count: number) {
+    await expect(this.favouriteButton(title)).toContainText(String(count));
   }
 }

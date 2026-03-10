@@ -3,11 +3,11 @@ import { Page, expect } from '@playwright/test';
 export class RegisterPage {
   constructor(private page: Page) {}
 
-  async goto() {
+  async open() {
     await this.page.goto('/register');
   }
 
-  async isLoaded() {
+  async expectLoaded() {
     await expect(this.page.getByRole('heading', { name: 'Sign up' })).toBeVisible();
   }
 

@@ -8,7 +8,7 @@ import type { ArticleData } from '@factories/article.factory';
 export class EditorPage {
   constructor(private page: Page) {}
 
-  async goto() {
+  async open() {
     await this.page.goto('/editor');
   }
 
@@ -59,7 +59,7 @@ export class EditorPage {
     await this.page.getByPlaceholder('Enter tags').blur();
   }
 
-  expectValidationError(message: string | RegExp) {
-    return expect(this.page.getByText(message)).toBeVisible();
+  async expectValidationError(message: string) {
+    await expect(this.page.getByText(message)).toBeVisible();
   }
 }

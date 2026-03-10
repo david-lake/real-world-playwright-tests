@@ -7,8 +7,8 @@ import { createUser } from '@factories/user.factory';
 test.describe('Article', () => {
 
   test.beforeEach(async ({ app, testUser }) => {
-    await app.login.goto();
-    await app.login.loginAs(testUser);
+    await app.login.open();
+    await app.login.login(testUser.email, testUser.plainPassword);
   });
 
   test.describe('Creation', () => {

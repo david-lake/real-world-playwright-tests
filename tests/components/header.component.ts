@@ -12,13 +12,25 @@ export class Header {
     return this.page.locator('#navbar-default');
   }
 
+  async gotoLogin() {
+    this.nav().getByRole('link', { name: 'Sign in' }).click();
+  }
+
+  async gotoRegister() {
+    this.nav().getByRole('link', { name: 'Sign up' }).click();
+  }
+
   async gotoNewArticle() {
     this.nav().getByRole('link', { name: 'New Article' }).click();
   }
 
+  async gotoSettings() {
+    this.nav().getByRole('link', { name: 'Settings' }).click();
+  }
+
   // --- State Verification ---
 
-  async isLoggedIn(username: string) {
+  async expectLoggedIn(username: string) {
     // Verify authenticated header state
     await expect(this.nav().getByRole('link', { name: 'Settings' })).toBeVisible();
     await expect(this.nav().getByRole('link', { name: 'New Article' })).toBeVisible();
@@ -27,7 +39,7 @@ export class Header {
     await expect(this.nav().getByRole('link', { name: 'Sign in' })).not.toBeVisible();
   }
 
-  async isLoggedOut() {
+  async expectLoggedOut() {
     // Verify guest header state
     await expect(this.nav().getByRole('link', { name: 'Sign in' })).toBeVisible();
     await expect(this.nav().getByRole('link', { name: 'Sign up' })).toBeVisible();

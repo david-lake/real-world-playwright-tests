@@ -1,20 +1,19 @@
 import { Page, expect } from '@playwright/test';
-import type { TestUser } from '@factories/user.factory';
 
 export class LoginPage {
   constructor(private page: Page) {}
 
-  async goto() {
+  async open() {
     await this.page.goto('/login');
   }
 
-  async isLoaded() {
+  async expectLoaded() {
     await expect(this.page.getByRole('heading', { name: 'Sign in' })).toBeVisible();
   }
 
-  async loginAs(user: TestUser) {
-    await this.page.getByPlaceholder('Email').fill(user.email);
-    await this.page.getByPlaceholder('Password').fill(user.plainPassword);
+  async login(email: string, password: string) {
+    await this.page.getByPlaceholder('Email').fill(email);
+    await this.page.getByPlaceholder('Password').fill(password);
     await this.page.getByRole('button', { name: "Sign in" }).click();
   }
 

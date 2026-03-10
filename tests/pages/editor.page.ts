@@ -12,12 +12,7 @@ export class EditorPage {
     await this.page.goto('/editor');
   }
 
-  async isLoaded() {
-    await expect(this.page.getByPlaceholder('Article title')).toBeVisible();
-    await expect(this.page.getByRole('button', { name: 'Publish Article' })).toBeVisible();
-  }
-
-  async isLoadedForEdit() {
+  async expectLoaded() {
     await expect(this.page.getByPlaceholder('Article title')).toBeVisible();
     await expect(this.page.getByRole('button', { name: 'Publish Article' })).toBeVisible();
   }

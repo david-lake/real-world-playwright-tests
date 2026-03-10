@@ -12,6 +12,10 @@ export class Header {
     return this.page.locator('#navbar-default');
   }
 
+  async gotoNewArticle() {
+    this.nav().getByRole('link', { name: 'New Article' }).click();
+  }
+
   // --- State Verification ---
 
   async isLoggedIn(username: string) {

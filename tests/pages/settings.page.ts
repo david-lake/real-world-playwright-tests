@@ -12,6 +12,6 @@ export class SettingsPage {
   }
 
   async logout() {
-    await this.page.getByRole('button', { name: 'Click here to logout' }).click();
+    await this.page.getByRole('button', { name: 'or click here to logout' }).click();
   }
 }

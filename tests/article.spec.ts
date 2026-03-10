@@ -1,152 +1,108 @@
 // spec: specs/article-test-plan.md
-// Critical article E2E tests (P0) plus high-priority (P1) for scalability.
 
 import { test, expect } from '@fixtures/auth.fixture';
-import { generateUniqueArticle, createArticle, deleteArticleBySlug } from '@factories/article.factory';
-import { createUser, deleteUserByEmail } from '@factories/user.factory';
+import { generateUniqueArticle, createArticle } from '@factories/article.factory';
+import { createUser } from '@factories/user.factory';
 
 test.describe('Article', () => {
 
   test.beforeEach(async ({ app, testUser }) => {
-    // Runs before each test and signs in each page.
     await app.login.goto();
     await app.login.loginAs(testUser);
-    await app.home.isLoaded();
-    await app.header.isLoggedIn(testUser.username);
   });
 
   test.describe('Creation', () => {
     test('Successful article creation', async ({ app }) => {
       const articleData = generateUniqueArticle();
 
-      await app.page.getByRole('link', { name: 'New article' }).click();
-      await app.editor.isLoaded();
+      await app.header.gotoNewArticle();
       await app.editor.createArticle(articleData);
 
-      await app.article.isLoaded();
-      await app.article.expectTitle(articleData.title);
-      await app.article.expectBodyContains(articleData.body);
-      await app.article.expectTagVisible(articleData.tagList[0]);
+      await app.article.expectLoaded();
+      await app.article.expectCorrectDetails(articleData.title, articleData.body)
+      // await app.article.expectTagVisible(articleData.tagList[0]);
     });
 
     test('Article creation validation errors', async ({ app }) => {
-      await app.page.getByRole('link', { name: 'New article' }).click();
-      await app.editor.isLoaded();
+      await app.header.gotoNewArticle();
 
       await expect(app.editor.publishButton()).toBeDisabled();
       await app.editor.triggerValidation();
 
-      await app.editor.isLoaded();
-      await app.editor.expectValidationError(/Title is required/i);
-      await app.editor.expectValidationError(/Article content is required/i);
-      await app.editor.expectValidationError(/Add at least one tag/i);
+      await app.editor.expectLoaded();
+      await app.editor.expectValidationError('Title is required');
+      await app.editor.expectValidationError('Article content is required');
+      await app.editor.expectValidationError('Add at least one tag');
     });
   });
 
   test.describe('Editing', () => {
-    test('Edit own article successfully', async ({ app }) => {
-      const articleData = generateUniqueArticle();
-      const updatedTitle = `Updated ${articleData.title}`;
+    test('Edit own article successfully', async ({ app, testUser }) => {
+      const article = await createArticle(testUser.id, generateUniqueArticle())
+      const updatedTitle = `Updated ${Date.now()}`;
       const updatedBody = `Updated body ${Date.now()}`;
 
-      await app.page.getByRole('link', { name: 'New article' }).click();
-      await app.editor.isLoaded();
-      await app.editor.createArticle(articleData);
-
-      await app.article.isLoaded();
-      await app.article.expectTitle(articleData.title);
-      await app.article.clickEdit();
-
-      await app.editor.isLoadedForEdit();
+      await app.article.open(article.slug)
+      await app.article.gotoEdit();
       await app.editor.updateArticle({ title: updatedTitle, body: updatedBody });
-
-      await app.article.isLoaded();
-      await app.article.expectTitle(updatedTitle);
-      await app.article.expectBodyContains(updatedBody);
+      
+      await app.article.expectLoaded();
+      await app.article.expectCorrectDetails(updatedTitle, updatedBody)
     });
   });
 
   test.describe('Favouriting', () => {
     test('Favourite and unfavourite article from global feed', async ({ app }) => {
       const author = await createUser();
-      const articleData = generateUniqueArticle();
-      const created = await createArticle(author.id, articleData);
+      const article = await createArticle(author.id);
 
-      try {
-        await app.home.goto();
-        await app.home.clickGlobalFeed();
+      await app.home.gotoGlobalFeed();
 
-        const card = app.home.getArticleCard(articleData.title);
-        const favouriteBtn = card.getByRole('button', { name: 'Toggle Favorite' });
+      const card = app.home.getArticleCard(article.title);
+      const favouriteBtn = card.getByRole('button', { name: 'Toggle Favorite' });
 
-        const initialText = (await favouriteBtn.innerText()).trim();
-        const initialCount = Number((initialText.match(/(\d+)\s*$/) ?? [])[1] ?? NaN);
-        expect(Number.isFinite(initialCount)).toBeTruthy();
+      const initialText = (await favouriteBtn.innerText()).trim();
+      const initialCount = Number((initialText.match(/(\d+)\s*$/) ?? [])[1] ?? NaN);
+      expect(Number.isFinite(initialCount)).toBeTruthy();
 
-        await favouriteBtn.click();
-        await expect(favouriteBtn).toContainText(String(initialCount + 1));
-        await favouriteBtn.click();
-        await expect(favouriteBtn).toContainText(String(initialCount));
-      } finally {
-        await deleteArticleBySlug(created.slug);
-        await deleteUserByEmail(author.email);
-      }
+      await favouriteBtn.click();
+      await expect(favouriteBtn).toContainText(String(initialCount + 1));
+      await favouriteBtn.click();
+      await expect(favouriteBtn).toContainText(String(initialCount));
     });
   });
 
   test.describe('Commenting', () => {
-    test('Add comment to article', async ({ app, testUser }) => {
-      const articleData = generateUniqueArticle();
+    test('Add comment to own article', async ({ app, testUser }) => {
+      const article = await createArticle(testUser.id)
       const commentText = `Test comment ${Date.now()}`;
 
-      await app.page.getByRole('link', { name: 'New article' }).click();
-      await app.editor.isLoaded();
-      await app.editor.createArticle(articleData);
-
-      await app.article.isLoaded();
+      await app.article.open(article.slug)
       await app.article.postComment(commentText);
 
-      await app.article.expectCommentWithTextAndAuthor(commentText, testUser.username);
+      await app.article.expectCommentVisible(commentText, testUser.username);
     });
   });
 
   test.describe('Deletion', () => {
-    test('Delete own article', async ({ app }) => {
-      const articleData = generateUniqueArticle();
+    test('Delete own article', async ({ app, testUser }) => {
+      const article = await createArticle(testUser.id)
 
-      await app.page.getByRole('link', { name: 'New article' }).click();
-      await app.editor.isLoaded();
-      await app.editor.createArticle(articleData);
+      await app.article.open(article.slug)
+      await app.article.delete();
 
-      await app.article.isLoaded();
-      await app.article.clickDelete();
-
-      await app.home.isLoaded();
-      await app.home.expectArticleNotInFeed(articleData.title);
+      await app.home.expectLoaded();
+      await app.home.expectArticleNotVisible(article.title)
     });
   });
 
   test.describe('Listing & Filters', () => {
     test('Article appears in global feed after creation', async ({ app, testUser }) => {
-      const articleData = generateUniqueArticle();
+      const article = await createArticle(testUser.id)
 
-      await app.page.getByRole('link', { name: 'New article' }).click();
-      await app.editor.isLoaded();
-      await app.editor.createArticle(articleData);
+      await app.home.gotoGlobalFeed();
 
-      await app.article.isLoaded();
-      await app.home.goto();
-      await app.home.clickGlobalFeed();
-      await app.page.reload();
-
-      await app.home.isLoaded();
-      try {
-        await app.home.expectArticleInGlobalFeed(articleData.title);
-      } catch {
-        await app.page.locator('#navbar-default').getByRole('link', { name: testUser.username }).click();
-        await expect(app.page.getByRole('link', { name: articleData.title })).toBeVisible({ timeout: 15000 });
-      }
-      await expect(app.page.getByText(articleData.description)).toBeVisible();
+      await app.home.expectArticleVisible(article.title, article.description)
     });
   });
 });

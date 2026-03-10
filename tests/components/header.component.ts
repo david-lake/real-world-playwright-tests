@@ -8,22 +8,42 @@ import { Page, expect } from '@playwright/test';
 export class Header {
   constructor(private page: Page) {}
 
-  // --- State Verification ---
-
-  async isLoggedIn(username: string) {
-    // Verify authenticated header state
-    await expect(this.page.getByRole('link', { name: "Settings" })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: "New article" })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: username })).toBeVisible();
-    // Verify no guest links
-    await expect(this.page.getByRole('link', { name: "Sign in" })).not.toBeVisible();
+  private nav() {
+    return this.page.locator('#navbar-default');
   }
 
-  async isLoggedOut() {
+  async gotoLogin() {
+    await this.nav().getByRole('link', { name: 'Sign in' }).click();
+  }
+
+  async gotoRegister() {
+    await this.nav().getByRole('link', { name: 'Sign up' }).click();
+  }
+
+  async gotoNewArticle() {
+    await this.nav().getByRole('link', { name: 'New Article' }).click();
+  }
+
+  async gotoSettings() {
+    await this.nav().getByRole('link', { name: 'Settings' }).click();
+  }
+
+  // --- State Verification ---
+
+  async expectLoggedIn(username: string) {
+    // Verify authenticated header state
+    await expect(this.nav().getByRole('link', { name: 'Settings' })).toBeVisible();
+    await expect(this.nav().getByRole('link', { name: 'New Article' })).toBeVisible();
+    await expect(this.nav().getByRole('link', { name: username })).toBeVisible();
+    // Verify no guest links
+    await expect(this.nav().getByRole('link', { name: 'Sign in' })).not.toBeVisible();
+  }
+
+  async expectLoggedOut() {
     // Verify guest header state
-    await expect(this.page.getByRole('link', { name: "Sign in" })).toBeVisible();
-    await expect(this.page.getByRole('link', { name: "Sign up" })).toBeVisible();
+    await expect(this.nav().getByRole('link', { name: 'Sign in' })).toBeVisible();
+    await expect(this.nav().getByRole('link', { name: 'Sign up' })).toBeVisible();
     // Verify no authenticated links
-    await expect(this.page.getByRole('link', { name: "Settings" })).not.toBeVisible();
+    await expect(this.nav().getByRole('link', { name: 'Settings' })).not.toBeVisible();
   }
 }

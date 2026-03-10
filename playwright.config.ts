@@ -4,10 +4,10 @@ import { defineConfig, devices } from '@playwright/test';
  * Minimal Playwright Configuration
  *
  * Starting with Chromium only. Other browsers can be added later.
+ * Article E2E: tests/article.spec.ts (specs/article-test-plan.md).
  */
 
 export default defineConfig({
-  // Test directory
   testDir: './tests',
 
   // Run tests in files in parallel
@@ -53,7 +53,7 @@ export default defineConfig({
 
   // Run local dev server before starting the tests
   webServer: {
-    command: 'yarn dev',
+    command: 'yarn dev -p 3000',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,

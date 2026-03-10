@@ -3,6 +3,8 @@ import { LoginPage } from '@pages/login.page';
 import { RegisterPage } from '@pages/register.page';
 import { SettingsPage } from '@pages/settings.page';
 import { HomePage } from '@pages/home.page';
+import { EditorPage } from '@pages/editor.page';
+import { ArticlePage } from '@pages/article.page';
 import { Header } from '@components/header.component';
 
 /**
@@ -15,6 +17,8 @@ export class App {
   readonly register: RegisterPage;
   readonly settings: SettingsPage;
   readonly home: HomePage;
+  readonly editor: EditorPage;
+  readonly article: ArticlePage;
   readonly header: Header;
 
   constructor(page: Page) {
@@ -23,6 +27,8 @@ export class App {
     this.register = new RegisterPage(page);
     this.settings = new SettingsPage(page);
     this.home = new HomePage(page);
+    this.editor = new EditorPage(page);
+    this.article = new ArticlePage(page);
     this.header = new Header(page);
   }
 }

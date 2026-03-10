@@ -102,6 +102,15 @@ test.describe('Article', () => {
       await app.home.expectLoaded();
       await app.home.expectArticleNotVisible(article.title)
     });
+
+    test('Prevent deleting article when not author', async ({ app }) => {
+      const author = await createUser();
+      const article = await createArticle(author.id);
+
+      await app.article.open(article.slug)
+
+      await app.article.expectCannotDelete();
+    });
   });
 
   test.describe('Listing & Filters', () => {

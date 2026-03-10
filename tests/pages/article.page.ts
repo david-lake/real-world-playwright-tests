@@ -45,4 +45,8 @@ export class ArticlePage {
   async expectCannotEdit() {
     await expect(this.page.getByRole('button', { name: 'Edit' })).not.toBeVisible();
   }
+
+  async expectCannotDelete() {
+    await expect(this.page.getByRole('button', { name: 'Delete' })).not.toBeVisible();
+  }
 }

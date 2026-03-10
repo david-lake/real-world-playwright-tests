@@ -11,9 +11,12 @@ export class ArticlePage {
     await expect(this.page.getByRole('heading', { level: 1 })).toBeVisible();
   }
 
-  async expectCorrectDetails(title: string, body: string) {
+  async expectCorrectDetails(title: string, body: string, tagList: string[]) {
     await expect(this.page.getByRole('heading', { name: title, level: 1 })).toBeVisible();
     await expect(this.page.getByText(body)).toBeVisible();
+    for (const tag of tagList) {
+      await expect(this.page.getByText(tag)).toBeVisible();
+    }
   }
 
   async gotoEdit() {

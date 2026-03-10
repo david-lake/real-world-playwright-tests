@@ -19,8 +19,7 @@ test.describe('Article', () => {
       await app.editor.createArticle(articleData);
 
       await app.article.expectLoaded();
-      await app.article.expectCorrectDetails(articleData.title, articleData.body)
-      // await app.article.expectTagVisible(articleData.tagList[0]);
+      await app.article.expectCorrectDetails(articleData.title, articleData.body, articleData.tagList)
     });
 
     test('Article creation validation errors', async ({ app }) => {
@@ -38,7 +37,7 @@ test.describe('Article', () => {
 
   test.describe('Editing', () => {
     test('Edit own article successfully', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id, generateUniqueArticle())
+      const article = await createArticle(testUser.id)
       const updatedTitle = `Updated ${Date.now()}`;
       const updatedBody = `Updated body ${Date.now()}`;
 
@@ -47,7 +46,7 @@ test.describe('Article', () => {
       await app.editor.updateArticle({ title: updatedTitle, body: updatedBody });
       
       await app.article.expectLoaded();
-      await app.article.expectCorrectDetails(updatedTitle, updatedBody)
+      await app.article.expectCorrectDetails(updatedTitle, updatedBody, article.tagList)
     });
   });
 

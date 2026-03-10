@@ -19,6 +19,32 @@ export class HomePage {
     await this.page.getByRole('link', { name: 'Global Feed' }).click();
   }
 
+  async gotoYourFeed() {
+    await this.page.getByRole('link', { name: 'Your Feed' }).click();
+  }
+
+  async clickTag(tagName: string) {
+    await this.page.locator('aside').getByRole('link', { name: tagName }).click();
+  }
+
+  async expectGlobalFeedTabActive() {
+    const globalFeedLink = this.page.getByRole('link', { name: 'Global Feed' });
+    await expect(globalFeedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
+  }
+
+  async expectYourFeedTabActive() {
+    const yourFeedLink = this.page.getByRole('link', { name: 'Your Feed' });
+    await expect(yourFeedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
+  }
+
+  async expectEmptyState() {
+    await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
+  }
+
+  async expectTagFilterActive(tag: string) {
+    await expect(this.page).toHaveURL(new RegExp(`[?&]tag=${tag}`));
+  }
+
   async expectArticleVisible(articleTitle: string, articleDescription: string) {
     await expect(this.page.getByRole('link', { name: articleTitle })).toBeVisible({ timeout: 10000 });
     await expect(this.page.getByText(articleDescription)).toBeVisible();

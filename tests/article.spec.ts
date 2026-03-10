@@ -48,6 +48,15 @@ test.describe('Article', () => {
       await app.article.expectLoaded();
       await app.article.expectCorrectDetails(updatedTitle, updatedBody, article.tagList)
     });
+
+    test('Prevent editing article when not author', async ({ app }) => {
+      const author = await createUser();
+      const article = await createArticle(author.id);
+
+      await app.article.open(article.slug)
+
+      await app.article.expectCannotEdit();
+    });
   });
 
   test.describe('Favouriting', () => {

@@ -41,4 +41,8 @@ export class ArticlePage {
     const commentBlock = this.page.locator('li').filter({ hasText: commentText });
     await expect(commentBlock).toContainText(authorUsername);
   }
+
+  async expectCannotEdit() {
+    await expect(this.page.getByRole('button', { name: 'Edit' })).not.toBeVisible();
+  }
 }

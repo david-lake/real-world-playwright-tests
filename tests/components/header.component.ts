@@ -13,19 +13,19 @@ export class Header {
   }
 
   async gotoLogin() {
-    this.nav().getByRole('link', { name: 'Sign in' }).click();
+    await this.nav().getByRole('link', { name: 'Sign in' }).click();
   }
 
   async gotoRegister() {
-    this.nav().getByRole('link', { name: 'Sign up' }).click();
+    await this.nav().getByRole('link', { name: 'Sign up' }).click();
   }
 
   async gotoNewArticle() {
-    this.nav().getByRole('link', { name: 'New Article' }).click();
+    await this.nav().getByRole('link', { name: 'New Article' }).click();
   }
 
   async gotoSettings() {
-    this.nav().getByRole('link', { name: 'Settings' }).click();
+    await this.nav().getByRole('link', { name: 'Settings' }).click();
   }
 
   // --- State Verification ---

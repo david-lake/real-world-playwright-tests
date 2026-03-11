@@ -10,13 +10,14 @@ import {
 } from '@factories/article.factory';
 import { createUser, deleteUserByEmail } from '@factories/user.factory';
 
-test.describe('Feed Navigation', () => {
-  test.describe('FT-001: Navigate to Global Feed', () => {
-    test('Global Feed tab visible and active by default for guests', async ({ app }) => {
+test.describe('Feeds', () => {
+
+  test.describe('Home', () => {
+
+    test('Global Feed: Active by default for guests', async ({ app }) => {
       await app.home.open();
       await app.home.expectLoaded();
 
-      await expect(app.page.getByRole('link', { name: 'Global Feed' })).toBeVisible();
       await app.home.expectGlobalFeedTabActive();
 
       const count = await app.feed.getArticleCardCount();
@@ -24,10 +25,8 @@ test.describe('Feed Navigation', () => {
 
       await app.header.expectLoggedOut();
     });
-  });
 
-  test.describe('FT-002: Switch Between Global Feed and Your Feed', () => {
-    test('Switch between Your Feed and Global Feed when following users with articles', async ({
+    test('Your Feed: Shows articles when following users with articles', async ({
       app,
       testUser,
     }) => {
@@ -54,13 +53,10 @@ test.describe('Feed Navigation', () => {
         await deleteUserByEmail(author.email);
       }
     });
-  });
 
-  test.describe('FT-003: Your Feed Empty State', () => {
-    test('Empty state when user follows no one', async ({ app, testUser }) => {
+    test('Your Feed: Empty when user follows no one', async ({ app, testUser }) => {
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);
-      await app.home.open();
       await app.home.expectLoaded();
 
       await app.home.gotoYourFeed();
@@ -72,8 +68,9 @@ test.describe('Feed Navigation', () => {
     });
   });
 
-  test.describe('FT-004: Navigate Through Paginated Results', () => {
-    test('First page shows 10 articles, scroll loads more', async ({ app }) => {
+  test.describe('Paginated Results', () => {
+
+    test('Scroll loads more when more than 10 articles', async ({ app }) => {
       const author = await createUser();
       const articles = await createArticles(author.id, 11);
 
@@ -94,10 +91,8 @@ test.describe('Feed Navigation', () => {
         await deleteUserByEmail(author.email);
       }
     });
-  });
 
-  test.describe('FT-005: Pagination Disabled on Single Page', () => {
-    test('All 5 articles visible, No More when single page', async ({ app }) => {
+    test('Scroll does not load more when less than 10 articles', async ({ app }) => {
       const author = await createUser();
       const uniqueTag = `ft005-only-${Date.now()}`;
       const articles = await createArticles(author.id, 5, { tagList: [uniqueTag] });
@@ -128,8 +123,9 @@ test.describe('Feed Navigation', () => {
     });
   });
 
-  test.describe('FT-006: Filter Feed by Tag', () => {
-    test('Click tag filters feed to matching articles only', async ({ app }) => {
+  test.describe('Filters', () => {
+
+    test('Filter by Tag: Shows matching articles only', async ({ app }) => {
       const author = await createUser();
       const articleA = await createArticle(author.id, generateUniqueArticle({ tagList: ['ft006-javascript'] }));
       const articleB = await createArticle(author.id, generateUniqueArticle({ tagList: ['ft006-ruby'] }));
@@ -150,8 +146,9 @@ test.describe('Feed Navigation', () => {
     });
   });
 
-  test.describe('FT-009: View My Articles on User Profile', () => {
-    test('My Articles tab active by default, user articles visible', async ({ app, testUser }) => {
+  test.describe('User Profile', () => {
+    
+    test('My Articles active by default showing user created articles', async ({ app, testUser }) => {
       const article = await createArticle(testUser.id);
 
       await app.login.open();
@@ -165,10 +162,8 @@ test.describe('Feed Navigation', () => {
 
       await expect(app.page.getByRole('link', { name: 'Favorited Articles' })).toBeVisible();
     });
-  });
 
-  test.describe('FT-010: View Favorited Articles on User Profile', () => {
-    test('Favorited Articles tab shows favorited articles', async ({ app, testUser }) => {
+    test('Favorited Articles shows favorited articles only', async ({ app, testUser }) => {
       const author = await createUser();
       const article = await createArticle(author.id);
 
@@ -189,3 +184,4 @@ test.describe('Feed Navigation', () => {
     });
   });
 });
+

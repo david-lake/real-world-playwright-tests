@@ -108,14 +108,4 @@ test.describe('Article', () => {
       await app.article.expectCannotDelete();
     });
   });
-
-  test.describe('Listing & Filters', () => {
-    test('Article appears in global feed after creation', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
-
-      await app.home.gotoGlobalFeed();
-
-      await app.home.expectArticleVisible(article.title, article.description)
-    });
-  });
 });

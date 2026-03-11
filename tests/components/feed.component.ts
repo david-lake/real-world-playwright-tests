@@ -1,18 +1,14 @@
-import { Page, expect } from '@playwright/test';
+import { Page, Locator,expect } from '@playwright/test';
 
 /**
  * Feed component - article list, pagination (load more), tag filters.
  * Used on home page and profile page.
  */
 export class FeedComponent {
-  constructor(private page: Page) {}
+  readonly articles: Locator;
 
-  getArticleCards() {
-    return this.page.locator('ul li:has(h1)');
-  }
-
-  async getArticleCardCount(): Promise<number> {
-    return this.getArticleCards().count();
+  constructor(private page: Page) {
+    this.articles = this.page.locator('ul li:has(h1)');
   }
 
   async scrollToLoadMore() {
@@ -20,11 +16,11 @@ export class FeedComponent {
     await this.page.waitForLoadState('networkidle');
   }
 
-  async expectNoMoreButtonVisible() {
+  async expectNoMoreArticles() {
     await expect(this.page.getByText('No More')).toBeVisible();
   }
 
-  async expectNoMoreButtonNotVisible() {
-    await expect(this.page.getByRole('button', { name: 'No More' })).not.toBeVisible();
+  async filterByTag(tagName: string) {
+    await this.page.locator('aside').getByRole('link', { name: tagName }).click();
   }
 }

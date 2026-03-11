@@ -23,10 +23,6 @@ export class HomePage {
     await this.page.getByRole('link', { name: 'Your Feed' }).click();
   }
 
-  async clickTag(tagName: string) {
-    await this.page.locator('aside').getByRole('link', { name: tagName }).click();
-  }
-
   async expectGlobalFeedTabActive() {
     const globalFeedLink = this.page.getByRole('link', { name: 'Global Feed' });
     await expect(globalFeedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
@@ -37,7 +33,7 @@ export class HomePage {
     await expect(yourFeedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
   }
 
-  async expectEmptyState() {
+  async expectEmptyFeed() {
     await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
   }
 

@@ -37,15 +37,6 @@ export class HomePage {
     await expect(this.page).toHaveURL(new RegExp(`[?&]tag=${tag}`));
   }
 
-  async expectArticleVisible(articleTitle: string, articleDescription: string) {
-    await expect(this.page.getByRole('link', { name: articleTitle })).toBeVisible({ timeout: 10000 });
-    await expect(this.page.getByText(articleDescription)).toBeVisible();
-  }
-
-  async expectArticleNotVisible(articleTitle: string) {
-    await expect(this.page.getByRole('link', { name: articleTitle })).not.toBeVisible();
-  }
-
   getArticleCard(title: string) {
     return this.page.locator('li', { has: this.page.getByRole('link', { name: title }) });
   }

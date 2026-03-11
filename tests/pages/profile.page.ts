@@ -6,12 +6,12 @@ import { Page, expect } from '@playwright/test';
 export class ProfilePage {
   constructor(private page: Page) {}
 
-  async goto(username: string) {
+  async open(username: string) {
     await this.page.goto(`/profile/${username}`);
   }
 
-  async expectLoaded() {
-    await expect(this.page).toHaveURL(/\/profile\/.+/);
+  async expectLoaded(username: string) {
+    await expect(this.page.getByRole('heading', { name: username, level: 4 })).toBeVisible();
   }
 
   async gotoMyArticles() {
@@ -30,9 +30,5 @@ export class ProfilePage {
   async expectFavoritedArticlesTabActive() {
     const favoritedLink = this.page.getByRole('link', { name: 'Favorited Articles' });
     await expect(favoritedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
-  }
-
-  async expectEmptyState() {
-    await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
   }
 }

@@ -33,6 +33,6 @@ export class FeedComponent {
   }
 
   async expectNoArticles() {
-    await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
+    await expect(this.page.getByText("No articles are here")).toBeVisible();
   }
 }

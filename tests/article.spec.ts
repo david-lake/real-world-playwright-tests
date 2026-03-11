@@ -96,7 +96,7 @@ test.describe('Article', () => {
       await app.article.delete();
 
       await app.home.expectLoaded();
-      await app.home.expectArticleNotVisible(article.title)
+      await app.feed.expectArticleNotVisible(article.title)
     });
 
     test('Prevent deleting article when not author', async ({ app }) => {

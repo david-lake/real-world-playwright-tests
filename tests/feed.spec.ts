@@ -134,8 +134,8 @@ test.describe('Feeds', () => {
 
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);
-      await app.profile.goto(testUser.username);
-      await app.profile.expectLoaded();
+      await app.profile.open(testUser.username);
+      await app.profile.expectLoaded(testUser.username);
 
       await app.profile.expectMyArticlesTabActive();
       await app.feed.expectArticleVisible(articleA.title);
@@ -150,8 +150,8 @@ test.describe('Feeds', () => {
 
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);
-      await app.profile.goto(testUser.username);
-      await app.profile.expectLoaded();
+      await app.profile.open(testUser.username);
+      await app.profile.expectLoaded(testUser.username);
       await app.profile.gotoFavoritedArticles();
 
       await app.profile.expectFavoritedArticlesTabActive();

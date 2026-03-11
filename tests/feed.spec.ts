@@ -24,8 +24,8 @@ test.describe('Feeds', () => {
       await app.header.expectLoggedOut();
 
       await app.home.expectGlobalFeedTabActive();
-      await app.home.expectArticleVisible(articleA.title, articleA.description)
-      await app.home.expectArticleVisible(articleB.title, articleB.description)
+      await app.feed.expectArticleVisible(articleA.title)
+      await app.feed.expectArticleVisible(articleB.title)
     });
 
     test('Switching feeds when following users with articles', async ({ app, testUser }) => {
@@ -39,18 +39,18 @@ test.describe('Feeds', () => {
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);
       await app.home.expectLoaded();
-
       await app.home.gotoYourFeed();
+
       await app.home.expectYourFeedTabActive();
-      await app.home.expectArticleVisible(articleB.title, articleB.description);
-      await app.home.expectArticleNotVisible(articleA.title);
-      await app.home.expectArticleNotVisible(articleC.title);
+      await app.feed.expectArticleVisible(articleB.title);
+      await app.feed.expectArticleNotVisible(articleA.title);
+      await app.feed.expectArticleNotVisible(articleC.title);
 
       await app.home.gotoGlobalFeed();
       await app.home.expectGlobalFeedTabActive();
-      await app.home.expectArticleVisible(articleA.title, articleA.description);
-      await app.home.expectArticleVisible(articleB.title, articleB.description);
-      await app.home.expectArticleVisible(articleC.title, articleC.description);
+      await app.feed.expectArticleVisible(articleA.title);
+      await app.feed.expectArticleVisible(articleB.title);
+      await app.feed.expectArticleVisible(articleC.title);
     });
 
     test('Your Feed: Empty when user follows no one', async ({ app, testUser }) => {
@@ -61,7 +61,7 @@ test.describe('Feeds', () => {
       await app.home.gotoYourFeed();
 
       await app.home.expectYourFeedTabActive();
-      await app.home.expectEmptyFeed();
+      await app.feed.expectNoArticles();
     });
   });
 
@@ -75,10 +75,11 @@ test.describe('Feeds', () => {
       await app.home.expectLoaded();
 
       await expect(app.feed.articles).toHaveCount(10);
+      await app.feed.expectArticleNotVisible(articles[0].title);
 
       await app.feed.scrollToLoadMore();
 
-      await app.home.expectArticleVisible(articles[10].title, articles[10].description);
+      await app.feed.expectArticleVisible(articles[0].title);
     });
 
     test('Scroll does not load more when less than 10 articles', async ({ app }) => {
@@ -92,16 +93,16 @@ test.describe('Feeds', () => {
       await app.feed.filterByTag(uniqueTag);
 
       for (const article of articles) {
-        await app.home.expectArticleVisible(article.title, article.description);
+        await app.feed.expectArticleVisible(article.title);
       }
 
       await expect(app.feed.articles).toHaveCount(9);
 
       await app.feed.scrollToLoadMore();
-      await app.feed.expectNoMoreArticles();
 
+      await app.feed.expectNoMoreArticles();
       for (const article of articles) {
-        await app.home.expectArticleVisible(article.title, article.description);
+        await app.feed.expectArticleVisible(article.title);
       }
     });
   });
@@ -116,12 +117,11 @@ test.describe('Feeds', () => {
 
       await app.home.open();
       await app.home.expectLoaded();
-
       await app.feed.filterByTag(uniqueTag);
 
       await app.home.expectTagFilterActive(uniqueTag);
-      await app.home.expectArticleVisible(articleA.title, articleA.description);
-      await app.home.expectArticleNotVisible(articleB.title);
+      await app.feed.expectArticleVisible(articleA.title);
+      await app.feed.expectArticleNotVisible(articleB.title);
     });
   });
 
@@ -138,8 +138,8 @@ test.describe('Feeds', () => {
       await app.profile.expectLoaded();
 
       await app.profile.expectMyArticlesTabActive();
-      await app.profile.expectArticleVisible(articleA.title);
-      await app.profile.expectArticleNotVisible(articleB.title);
+      await app.feed.expectArticleVisible(articleA.title);
+      await app.feed.expectArticleNotVisible(articleB.title);
     });
 
     test('Favorited Articles shows favorited articles only', async ({ app, testUser }) => {
@@ -155,8 +155,8 @@ test.describe('Feeds', () => {
       await app.profile.gotoFavoritedArticles();
 
       await app.profile.expectFavoritedArticlesTabActive();
-      await app.profile.expectArticleVisible(articleA.title);
-      await app.profile.expectArticleNotVisible(articleB.title);
+      await app.feed.expectArticleVisible(articleA.title);
+      await app.feed.expectArticleNotVisible(articleB.title);
     });
   });
 });

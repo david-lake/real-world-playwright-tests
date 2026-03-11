@@ -33,10 +33,6 @@ export class HomePage {
     await expect(yourFeedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
   }
 
-  async expectEmptyFeed() {
-    await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
-  }
-
   async expectTagFilterActive(tag: string) {
     await expect(this.page).toHaveURL(new RegExp(`[?&]tag=${tag}`));
   }

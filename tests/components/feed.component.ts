@@ -23,4 +23,16 @@ export class FeedComponent {
   async filterByTag(tagName: string) {
     await this.page.locator('aside').getByRole('link', { name: tagName }).click();
   }
+
+  async expectArticleVisible(title: string) {
+    await expect(this.page.getByRole('link', { name: title })).toBeVisible();
+  }
+
+  async expectArticleNotVisible(title: string) {
+    await expect(this.page.getByRole('link', { name: title })).not.toBeVisible();
+  }
+
+  async expectNoArticles() {
+    await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
+  }
 }

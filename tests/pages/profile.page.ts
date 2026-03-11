@@ -14,10 +14,6 @@ export class ProfilePage {
     await expect(this.page).toHaveURL(/\/profile\/.+/);
   }
 
-  async expectUsernameDisplayed(username: string) {
-    await expect(this.page.getByRole('heading', { name: username })).toBeVisible();
-  }
-
   async gotoMyArticles() {
     await this.page.getByRole('link', { name: 'My Articles' }).click();
   }
@@ -36,23 +32,7 @@ export class ProfilePage {
     await expect(favoritedLink).toHaveClass(/cursor-default|text-primary|border-primary/);
   }
 
-  async expectArticleVisible(articleTitle: string) {
-    await expect(this.page.getByRole('link', { name: articleTitle })).toBeVisible();
-  }
-
-  async expectArticleNotVisible(articleTitle: string) {
-    await expect(this.page.getByRole('link', { name: articleTitle })).not.toBeVisible();
-  }
-
   async expectEmptyState() {
     await expect(this.page.getByText(/no articles are here/i)).toBeVisible();
-  }
-
-  getArticleCards() {
-    return this.page.locator('ul li:has(h1)');
-  }
-
-  async getArticleCardCount() {
-    return this.getArticleCards().count();
   }
 }

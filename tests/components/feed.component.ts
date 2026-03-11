@@ -24,6 +24,10 @@ export class FeedComponent {
     await this.page.locator('aside').getByRole('link', { name: tagName }).click();
   }
 
+  async expectTagFilterActive(tag: string) {
+    await expect(this.page).toHaveURL(new RegExp(`[?&]tag=${tag}`));
+  }
+
   async expectArticleVisible(title: string) {
     await expect(this.page.getByRole('link', { name: title })).toBeVisible();
   }
@@ -34,5 +38,31 @@ export class FeedComponent {
 
   async expectNoArticles() {
     await expect(this.page.getByText("No articles are here")).toBeVisible();
+  }
+
+  getArticleCard(title: string) {
+    return this.page.locator('li', { has: this.page.getByRole('link', { name: title }) });
+  }
+  
+  favouriteButton(title: string) {
+    return this.getArticleCard(title).getByRole('button', { name: 'Toggle Favorite' });
+  }
+  
+  async getFavouriteCount(title: string) {
+    const text = (await this.favouriteButton(title).innerText()).trim();
+    const match = text.match(/(\d+)\s*$/);
+    return Number(match?.[1] ?? 0);
+  }
+  
+  async favouriteArticle(title: string) {
+    await this.favouriteButton(title).click();
+  }
+  
+  async unfavouriteArticle(title: string) {
+    await this.favouriteButton(title).click();
+  }
+  
+  async expectFavouriteCount(title: string, count: number) {
+    await expect(this.favouriteButton(title)).toContainText(String(count));
   }
 }

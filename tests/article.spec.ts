@@ -66,13 +66,13 @@ test.describe('Article', () => {
     
       await app.home.gotoGlobalFeed();
     
-      const initialCount = await app.home.getFavouriteCount(article.title);
+      const initialCount = await app.feed.getFavouriteCount(article.title);
     
-      await app.home.favouriteArticle(article.title);
-      await app.home.expectFavouriteCount(article.title, initialCount + 1);
+      await app.feed.favouriteArticle(article.title);
+      await app.feed.expectFavouriteCount(article.title, initialCount + 1);
     
-      await app.home.unfavouriteArticle(article.title);
-      await app.home.expectFavouriteCount(article.title, initialCount);
+      await app.feed.unfavouriteArticle(article.title);
+      await app.feed.expectFavouriteCount(article.title, initialCount);
     });
   });
 

@@ -119,7 +119,7 @@ test.describe('Feeds', () => {
       await app.home.expectLoaded();
       await app.feed.filterByTag(uniqueTag);
 
-      await app.home.expectTagFilterActive(uniqueTag);
+      await app.feed.expectTagFilterActive(uniqueTag);
       await app.feed.expectArticleVisible(articleA.title);
       await app.feed.expectArticleNotVisible(articleB.title);
     });

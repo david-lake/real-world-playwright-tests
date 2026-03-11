@@ -1,12 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
 
-/**
- * Minimal Playwright Configuration
- *
- * Starting with Chromium only. Other browsers can be added later.
- * Article E2E: tests/article.spec.ts (specs/article-test-plan.md).
- */
-
 export default defineConfig({
   testDir: './tests',
 

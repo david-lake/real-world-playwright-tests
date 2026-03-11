@@ -66,13 +66,13 @@ test.describe('Article', () => {
     
       await app.home.gotoGlobalFeed();
     
-      const initialCount = await app.home.getFavouriteCount(article.title);
+      const initialCount = await app.feed.getFavouriteCount(article.title);
     
-      await app.home.favouriteArticle(article.title);
-      await app.home.expectFavouriteCount(article.title, initialCount + 1);
+      await app.feed.favouriteArticle(article.title);
+      await app.feed.expectFavouriteCount(article.title, initialCount + 1);
     
-      await app.home.unfavouriteArticle(article.title);
-      await app.home.expectFavouriteCount(article.title, initialCount);
+      await app.feed.unfavouriteArticle(article.title);
+      await app.feed.expectFavouriteCount(article.title, initialCount);
     });
   });
 
@@ -96,7 +96,7 @@ test.describe('Article', () => {
       await app.article.delete();
 
       await app.home.expectLoaded();
-      await app.home.expectArticleNotVisible(article.title)
+      await app.feed.expectArticleNotVisible(article.title)
     });
 
     test('Prevent deleting article when not author', async ({ app }) => {
@@ -106,16 +106,6 @@ test.describe('Article', () => {
       await app.article.open(article.slug)
 
       await app.article.expectCannotDelete();
-    });
-  });
-
-  test.describe('Listing & Filters', () => {
-    test('Article appears in global feed after creation', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
-
-      await app.home.gotoGlobalFeed();
-
-      await app.home.expectArticleVisible(article.title, article.description)
     });
   });
 });

@@ -6,9 +6,11 @@ import { Page, Locator,expect } from '@playwright/test';
  */
 export class FeedComponent {
   readonly articles: Locator;
+  readonly sidebar: Locator;
 
   constructor(private page: Page) {
     this.articles = this.page.locator('ul li:has(h1)');
+    this.sidebar = this.page.locator('aside');
   }
 
   async scrollToLoadMore() {
@@ -21,11 +23,15 @@ export class FeedComponent {
   }
 
   async filterByTag(tagName: string) {
-    await this.page.locator('aside').getByRole('link', { name: tagName }).click();
+    await this.sidebar.getByRole('link', { name: tagName }).click();
   }
 
-  async expectTagFilterActive(tag: string) {
-    await expect(this.page).toHaveURL(new RegExp(`[?&]tag=${tag}`));
+  async expectTagFilterActive(tagName: string) {
+    await expect(this.page).toHaveURL(new RegExp(`[?&]tag=${tagName}`));
+    const tagLink = this.sidebar.getByRole('link', { name: tagName });
+    await expect(tagLink).toContainClass('cursor-default');
+    await expect(tagLink).toContainClass('underline');
+    await expect(tagLink).toContainClass('bg-gray-600');
   }
 
   async expectArticleVisible(title: string) {

@@ -142,6 +142,16 @@ test.describe('Feeds', () => {
       await app.feed.expectArticleNotVisible(articleB.title);
     });
 
+    test('My Articles empty when user has no articles', async ({ app, testUser }) => {
+      await app.login.open();
+      await app.login.login(testUser.email, testUser.plainPassword);
+      await app.profile.open(testUser.username);
+      await app.profile.expectLoaded(testUser.username);
+
+      await app.profile.expectMyArticlesTabActive();
+      await app.feed.expectNoArticles();
+    });
+
     test('Favorited Articles shows favorited articles only', async ({ app, testUser }) => {
       const author = await createUser();
       const articleA = await createArticle(author.id);
@@ -157,6 +167,17 @@ test.describe('Feeds', () => {
       await app.profile.expectFavoritedArticlesTabActive();
       await app.feed.expectArticleVisible(articleA.title);
       await app.feed.expectArticleNotVisible(articleB.title);
+    });
+
+    test('Favorited Articles empty when user has no favorited articles', async ({ app, testUser }) => {
+      await app.login.open();
+      await app.login.login(testUser.email, testUser.plainPassword);
+      await app.profile.open(testUser.username);
+      await app.profile.expectLoaded(testUser.username);
+      await app.profile.gotoFavoritedArticles();
+
+      await app.profile.expectFavoritedArticlesTabActive();
+      await app.feed.expectNoArticles();
     });
   });
 });

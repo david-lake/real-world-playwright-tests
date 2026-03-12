@@ -12,8 +12,8 @@ export default defineConfig({
   // Retry on CI only
   retries: process.env.CI ? 2 : 0,
 
-  // Opt out of parallel tests on CI
-  workers: process.env.CI ? 1 : undefined,
+  // Single worker required for DB isolation (cleaner resets DB before each test)
+  workers: 1,
 
   // Reporter to use
   reporter: 'list',

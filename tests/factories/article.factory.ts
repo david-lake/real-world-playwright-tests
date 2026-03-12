@@ -101,6 +101,20 @@ export async function createArticles(
   return articles;
 }
 
+export async function createComment(
+  articleId: number,
+  authorId: number,
+  body: string
+): Promise<void> {
+  await prisma.comment.create({
+    data: {
+      body,
+      articleId,
+      authorId,
+    },
+  });
+}
+
 /**
  * Create a follow relationship for "Your Feed" tests.
  * followerId follows followeeId (follower's feed will include followee's articles).

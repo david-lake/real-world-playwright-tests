@@ -76,18 +76,6 @@ test.describe('Article', () => {
     });
   });
 
-  test.describe('Commenting', () => {
-    test('Add comment to own article', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
-      const commentText = `Test comment ${Date.now()}`;
-
-      await app.article.open(article.slug)
-      await app.article.postComment(commentText);
-
-      await app.article.expectCommentVisible(commentText, testUser.username);
-    });
-  });
-
   test.describe('Deletion', () => {
     test('Delete own article', async ({ app, testUser }) => {
       const article = await createArticle(testUser.id)

@@ -5,7 +5,7 @@ import { Page, expect } from '@playwright/test';
  * Interacts with the actual UI elements (not direct URL navigation).
  * Use this to verify navigation states and click header links.
  */
-export class Header {
+export class HeaderComponent {
   constructor(private page: Page) {}
 
   private nav() {

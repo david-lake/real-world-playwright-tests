@@ -213,6 +213,87 @@ This test plan covers article creation, editing, deletion, favouriting, and comm
 
 ---
 
+### AT-011: Add Comment to Another Author's Article
+**Preconditions:** User is logged in; article exists created by a different user.
+
+**Steps:**
+1. Create an article via factory as `authorUser`.
+2. Log in as `testUser` (different from author).
+3. Navigate to the article detail page.
+4. Enter a comment in the comment textarea.
+5. Click "Post Comment" button.
+
+**Expected Result:**
+- Comment appears in the comments list.
+- Comment shows `testUser.username` as the author (not the article author).
+- Article author information remains unchanged.
+
+**Selector / Fixture / Test Data Notes:**
+- Use `createUser()` to create `authorUser` separate from `testUser`.
+- Use `createArticle(authorUser.id)` to seed article with different owner.
+- Use unique comment text per test (e.g., `"Comment from reader " + Date.now()`).
+
+**Multi-point Assertions:**
+- Assert new comment item's text content matches submitted comment.
+- Assert comment author username matches `testUser.username` (the commenter, not article author).
+- Assert article header still shows original `authorUser.username`.
+- Assert comment appears below existing comments (if any).
+
+---
+
+### AT-012: Delete Own Comment
+**Preconditions:** User is logged in; user has previously posted a comment on an article.
+
+**Steps:**
+1. Create an article and add a comment as `testUser` (via factory or UI).
+2. Navigate to the article detail page.
+3. Locate the user's own comment in the comments list.
+4. Click the "Delete" button/icon on the comment.
+
+**Expected Result:**
+- Comment is removed from the comments list.
+- Comment count (if displayed) decreases by 1.
+- Other comments remain visible.
+
+**Selector / Fixture / Test Data Notes:**
+- Use `app.article.postComment()` or factory to seed initial comment.
+- Use `getByRole('button', { name: /delete/i })` scoped to the comment card.
+- Use `app.article.expectCommentNotVisible(commentText)` helper for assertion.
+
+**Multi-point Assertions:**
+- Assert deleted comment text is no longer visible on the page.
+- Assert other comments (if any) remain visible.
+- Assert comment count indicator updates correctly (if present).
+- Assert article detail page remains loaded (no navigation).
+
+---
+
+### AT-013: Prevent Deleting Another User's Comment
+**Preconditions:** Two users exist; `authorUser` has article with comment from `otherUser`.
+
+**Steps:**
+1. Create article as `authorUser`.
+2. Add comment as `otherUser` via factory.
+3. Log in as `authorUser` (article owner, but not comment owner).
+4. Navigate to the article detail page.
+5. Locate the comment posted by `otherUser`.
+
+**Expected Result:**
+- No "Delete" button is visible on comments not authored by the current user.
+- Comment cannot be removed by article owner (only comment owner can delete).
+
+**Selector / Fixture / Test Data Notes:**
+- Create `authorUser` and `otherUser` via factories.
+- Create article with `authorUser.id`, comment with `otherUser.id`.
+- Use scoped locator: `commentBlock.getByRole('button', { name: /delete/i })`.
+
+**Multi-point Assertions:**
+- Assert comment from `otherUser` is visible to `authorUser`.
+- Assert delete button is not visible on `otherUser`'s comment when viewed by `authorUser`.
+- Assert article owner can still see their own article controls (Edit/Delete article).
+
+---
+
 ## Test Suite 6: Article Listing & Filters
 
 ### AT-009: Article Appears in Global Feed After Creation
@@ -266,12 +347,13 @@ This test plan covers article creation, editing, deletion, favouriting, and comm
 
 ## Priority Matrix
 
-| Priority    | Tests                          | Rationale                                    |
-| ----------- | ------------------------------ | -------------------------------------------- |
-| P0 Critical | AT-001, AT-004, AT-005, AT-009 | Core CRUD + security boundaries + visibility |
-| P1 High     | AT-002, AT-003, AT-006, AT-007 | Edit, validation, engagement features        |
-| P2 Medium   | AT-008, AT-010                 | Auth boundaries (less critical), filtering   |
-| P3 Low      | (none)                         | —                                            |
+| Priority    | Tests                                | Rationale                                                  |
+| ----------- | ------------------------------------ | ---------------------------------------------------------- |
+| P0 Critical | AT-001, AT-004, AT-005, AT-012       | Core CRUD + security boundaries + visibility               |
+| P1 High     | AT-002, AT-003, AT-006, AT-007       | Edit, validation, engagement features                      |
+| P1 High     | AT-011, AT-012, AT-013               | Commenting depth (cross-user, delete, authorization)       |
+| P2 Medium   | AT-008                               | Guest commenting restrictions                              |
+| P3 Low      | (none)                               | —                                                          |
 
 ---
 

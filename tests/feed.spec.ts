@@ -1,6 +1,6 @@
 // spec: specs/feed-navigation-test-plan.md
 
-import { test, expect } from '@fixtures/auth.fixture';
+import { test, expect } from '@fixtures/test.fixture';
 import {
   createArticle,
   createArticles,

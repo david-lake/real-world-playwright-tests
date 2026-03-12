@@ -1,6 +1,4 @@
-// spec: specs/article-test-plan.md
-
-import { test, expect } from '@fixtures/auth.fixture';
+import { test, expect } from '@fixtures/test.fixture';
 import { createArticle, createComment } from '@factories/article.factory';
 import { createUser } from '@factories/user.factory';
 

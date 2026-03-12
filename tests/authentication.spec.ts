@@ -1,4 +1,4 @@
-import { test } from '@fixtures/auth.fixture';
+import { test } from '@fixtures/test.fixture';
 import { UserData, generateUniqueUser, createUser, deleteUserByEmail } from '@factories/user.factory';
 
 test.describe('Authentication', () => {

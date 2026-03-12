@@ -27,6 +27,14 @@ export class ArticlePage {
     await this.page.getByRole('button', { name: 'Delete' }).first().click();
   }
 
+  async expectCannotEdit() {
+    await expect(this.page.getByRole('button', { name: 'Edit' })).not.toBeVisible();
+  }
+
+  async expectCannotDelete() {
+    await expect(this.page.getByRole('button', { name: 'Delete' })).not.toBeVisible();
+  }
+
   async postComment(commentBody: string) {
     const textarea = this.page.getByPlaceholder('Write a comment...');
     const postButton = this.page.getByRole('button', { name: 'Post Comment' });
@@ -37,36 +45,24 @@ export class ArticlePage {
     await postButton.click();
   }
 
-  async expectCommentVisible(commentText: string, authorUsername: string) {
-    const commentBody = this.page.getByText(commentText, { exact: true });
-    const commentBlock = commentBody.locator('..').locator('..');
-    await expect(commentBlock).toContainText(authorUsername);
+  getCommentBlock(commentText: string) {
+    return this.page.locator('li').filter({ hasText: commentText });
   }
 
-  commentTextarea() {
-    return this.page.getByPlaceholder('Write a comment...');
+  async expectCommentVisible(commentText: string, authorUsername: string) {
+    await expect(this.getCommentBlock(commentText)).toBeVisible();
+    await expect(this.getCommentBlock(commentText)).toContainText(authorUsername);
   }
 
   async deleteComment(commentText: string) {
-    const commentBlock = this.page.locator('div').filter({ hasText: commentText }).first();
-    await expect(commentBlock).toBeVisible();
-    await commentBlock.getByLabel(/Delete comment/).click();
+    await this.getCommentBlock(commentText).getByLabel("Delete comment").click();
   }
 
   async expectCommentNotVisible(commentText: string) {
-    const commentBody = this.page.getByText(commentText, { exact: true });
-    await expect(commentBody).toHaveCount(0);
+    await expect(this.page.getByText(commentText, { exact: true })).not.toBeVisible();
   }
 
   async expectCannotDeleteComment(commentText: string) {
-    await expect(this.page.getByLabel(/Delete comment/)).toHaveCount(0);
-  }
-
-  async expectCannotEdit() {
-    await expect(this.page.getByRole('button', { name: 'Edit' })).not.toBeVisible();
-  }
-
-  async expectCannotDelete() {
-    await expect(this.page.getByRole('button', { name: 'Delete' })).not.toBeVisible();
+    await expect(this.getCommentBlock(commentText).getByLabel("Delete comment")).not.toBeVisible();
   }
 }

@@ -38,8 +38,28 @@ export class ArticlePage {
   }
 
   async expectCommentVisible(commentText: string, authorUsername: string) {
-    const commentBlock = this.page.locator('li').filter({ hasText: commentText });
+    const commentBody = this.page.getByText(commentText, { exact: true });
+    const commentBlock = commentBody.locator('..').locator('..');
     await expect(commentBlock).toContainText(authorUsername);
+  }
+
+  commentTextarea() {
+    return this.page.getByPlaceholder('Write a comment...');
+  }
+
+  async deleteComment(commentText: string) {
+    const commentBlock = this.page.locator('div').filter({ hasText: commentText }).first();
+    await expect(commentBlock).toBeVisible();
+    await commentBlock.getByLabel(/Delete comment/).click();
+  }
+
+  async expectCommentNotVisible(commentText: string) {
+    const commentBody = this.page.getByText(commentText, { exact: true });
+    await expect(commentBody).toHaveCount(0);
+  }
+
+  async expectCannotDeleteComment(commentText: string) {
+    await expect(this.page.getByLabel(/Delete comment/)).toHaveCount(0);
   }
 
   async expectCannotEdit() {

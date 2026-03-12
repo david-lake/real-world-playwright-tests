@@ -2,7 +2,9 @@ import { test } from '@fixtures/test.fixture';
 import { UserData, generateUniqueUser, createUser, deleteUserByEmail } from '@factories/user.factory';
 
 test.describe('Authentication', () => {
+
   test.describe('Registration', () => {
+
     test('Successful user registration', async ({ app }) => {
       const newUser = generateUniqueUser();
 
@@ -39,6 +41,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Login', () => {
+
     test('Successful login with valid email and password', async ({ app, testUser }) => {
       await app.home.open();
       await app.header.gotoLogin();
@@ -90,6 +93,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Logout', () => {
+
     test('Successful logout', async ({ app, testUser }) => {
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);
@@ -103,6 +107,7 @@ test.describe('Authentication', () => {
   });
 
   test.describe('Protected Routes', () => {
+    
     test('Access settings page when authenticated', async ({ app, testUser }) => {
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);

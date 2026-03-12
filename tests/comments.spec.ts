@@ -5,6 +5,7 @@ import { createUser } from '@factories/user.factory';
 test.describe('Comments', () => {
 
   test.describe('Guests', () => {
+
     test('Prevent commenting on articles when not logged in', async ({ app, testUser }) => {
       const article = await createArticle(testUser.id);
 
@@ -34,6 +35,7 @@ test.describe('Comments', () => {
   });
 
   test.describe('Authenticated user', () => {
+    
     test.beforeEach(async ({ app, testUser }) => {
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);

@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
 import { createUser, deleteUserByEmail, type TestUser } from '@factories/user.factory';
-import { App } from '@pages/app';
+import { App } from 'tests/app/app';
 
 export const test = base.extend<{
   testUser: TestUser;

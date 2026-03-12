@@ -13,8 +13,8 @@ test.describe('Comments', () => {
       await app.article.open(article.slug);
       await app.article.expectLoaded();
       await app.header.expectLoggedOut();
-      
-      await expect(app.article.commentTextarea()).toHaveCount(0);
+
+      await expect(app.page.getByPlaceholder('Write a comment...')).not.toBeVisible();
 
       const guestPrompt = app.page.getByText('Sign in or sign up to add comments on this article.');
       await expect(guestPrompt).toBeVisible();
@@ -35,7 +35,7 @@ test.describe('Comments', () => {
     });
   });
 
-  test.describe('Authenticated as test user', () => {
+  test.describe('Authenticated user', () => {
     test.beforeEach(async ({ app, testUser }) => {
       await app.login.open();
       await app.login.login(testUser.email, testUser.plainPassword);
@@ -48,54 +48,44 @@ test.describe('Comments', () => {
       const commentText = `Test comment ${Date.now()}`;
 
       await app.article.open(article.slug)
+      await app.article.expectLoaded();
       await app.article.postComment(commentText);
-
+      
+      await app.article.expectLoaded();
       await app.article.expectCommentVisible(commentText, testUser.username);
     });
 
     test("Add comment to another author's article", async ({ app, testUser }) => {
-      const authorUser = await createUser();
-      const article = await createArticle(authorUser.id);
+      const author = await createUser();
+      const article = await createArticle(author.id);
       const commentText = `Comment from reader ${Date.now()}`;
 
       await app.article.open(article.slug);
       await app.article.expectLoaded();
-
       await app.article.postComment(commentText);
-
+      
+      await app.article.expectLoaded();
       await app.article.expectCommentVisible(commentText, testUser.username);
     });
 
     test('Delete own comment', async ({ app, testUser }) => {
       const article = await createArticle(testUser.id);
       const commentText = `Comment to delete ${Date.now()}`;
+      await createComment(article.id, testUser.id, commentText);
 
       await app.article.open(article.slug);
       await app.article.expectLoaded();
-
-      await app.article.postComment(commentText);
-      await app.article.expectCommentVisible(commentText, testUser.username);
-
       await app.article.deleteComment(commentText);
-
-      await app.article.expectCommentNotVisible(commentText);
+      
       await app.article.expectLoaded();
+      await app.article.expectCommentNotVisible(commentText);
     });
-  });
 
-  test.describe("Author vs other user's comment", () => {
-    test("Prevent deleting another user's comment", async ({ app }) => {
-      const authorUser = await createUser();
+    test("Prevent deleting another user's comment", async ({ app, testUser }) => {
       const otherUser = await createUser();
-      const article = await createArticle(authorUser.id);
+      const article = await createArticle(testUser.id);
       const commentText = `Other user comment ${Date.now()}`;
-
       await createComment(article.id, otherUser.id, commentText);
-
-      await app.login.open();
-      await app.login.login(authorUser.email, authorUser.plainPassword);
-      await app.home.expectLoaded();
-      await app.header.expectLoggedIn(authorUser.username);
 
       await app.article.open(article.slug);
       await app.article.expectLoaded();

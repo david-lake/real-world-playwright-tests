@@ -54,6 +54,7 @@ jobs:
         run: yarn playwright test
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PRIVATE_JWK: ${{ secrets.PRIVATE_JWK }}
 
       - name: Merge blob reports
         if: always()

@@ -48,7 +48,7 @@ export default defineConfig({
   webServer: {
     command: 'yarn dev -p 3000',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI || process.env.PLAYWRIGHT_REUSE_SERVER === 'true',
+    reuseExistingServer: true,
     timeout: 120000,
   },
 });

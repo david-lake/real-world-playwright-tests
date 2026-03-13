@@ -4,9 +4,9 @@ import { createUser } from '@factories/user.factory';
 
 test.describe('Article', () => {
 
-  test.beforeEach(async ({ app, testUser }) => {
+  test.beforeEach(async ({ app, user }) => {
     await app.login.open();
-    await app.login.login(testUser.email, testUser.plainPassword);
+    await app.login.login(user.email, user.plainPassword);
   });
 
   test.describe('Creation', () => {
@@ -36,8 +36,8 @@ test.describe('Article', () => {
 
   test.describe('Editing', () => {
     
-    test('Edit own article successfully', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
+    test('Edit own article successfully', async ({ app, user }) => {
+      const article = await createArticle(user.id)
       const updatedTitle = `Updated ${Date.now()}`;
       const updatedBody = `Updated body ${Date.now()}`;
 
@@ -79,8 +79,8 @@ test.describe('Article', () => {
 
   test.describe('Deletion', () => {
     
-    test('Delete own article', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
+    test('Delete own article', async ({ app, user }) => {
+      const article = await createArticle(user.id)
 
       await app.article.open(article.slug)
       await app.article.delete();

@@ -1,5 +1,5 @@
 import { test } from '@fixtures/test.fixture';
-import { UserData, generateUniqueUser, createUser, deleteUserByEmail } from '@factories/user.factory';
+import { UserData, generateUniqueUser } from '@factories/user.factory';
 
 test.describe('Authentication', () => {
 
@@ -16,23 +16,23 @@ test.describe('Authentication', () => {
       await app.header.expectLoggedIn(newUser.username);
     });
 
-    test('Registration with duplicate username', async ({ app, testUser }) => {
+    test('Registration with duplicate username', async ({ app, user }) => {
       const newUser = generateUniqueUser();
 
       await app.login.open();
       await app.login.gotoNeedAnAccount();
-      await app.register.register(testUser.username, newUser.email, newUser.password);
+      await app.register.register(user.username, newUser.email, newUser.password);
 
       await app.register.expectLoaded();
       await app.register.expectError('Username or email had been used');
       await app.header.expectLoggedOut();
     });
 
-    test('Registration with duplicate email', async ({ app, testUser }) => {
+    test('Registration with duplicate email', async ({ app, user }) => {
       const newUser = generateUniqueUser();
 
       await app.register.open();
-      await app.register.register(newUser.username, testUser.email, newUser.password);
+      await app.register.register(newUser.username, user.email, newUser.password);
 
       await app.register.expectLoaded();
       await app.register.expectError('Username or email had been used');
@@ -42,18 +42,18 @@ test.describe('Authentication', () => {
 
   test.describe('Login', () => {
 
-    test('Successful login with valid email and password', async ({ app, testUser }) => {
+    test('Successful login with valid email and password', async ({ app, user }) => {
       await app.home.open();
       await app.header.gotoLogin();
-      await app.login.login(testUser.email, testUser.plainPassword);
+      await app.login.login(user.email, user.plainPassword);
 
       await app.home.expectLoaded();
-      await app.header.expectLoggedIn(testUser.username);
+      await app.header.expectLoggedIn(user.username);
     });
 
-    test('Login with invalid password', async ({ app, testUser }) => {
+    test('Login with invalid password', async ({ app, user }) => {
       const invalidPasswordUser: UserData = {
-        ...testUser,
+        ...user,
         password: 'WrongPass123!',
       };
 
@@ -80,24 +80,24 @@ test.describe('Authentication', () => {
       await app.header.expectLoggedOut();
     });
 
-    test('Session persists on page refresh', async ({ app, testUser, page }) => {
+    test('Session persists on page refresh', async ({ app, user, page }) => {
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.header.expectLoggedIn(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.header.expectLoggedIn(user.username);
 
       await page.reload();
 
       await app.home.expectLoaded();
-      await app.header.expectLoggedIn(testUser.username);
+      await app.header.expectLoggedIn(user.username);
     });
   });
 
   test.describe('Logout', () => {
 
-    test('Successful logout', async ({ app, testUser }) => {
+    test('Successful logout', async ({ app, user }) => {
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.header.expectLoggedIn(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.header.expectLoggedIn(user.username);
 
       await app.header.gotoSettings();
       await app.settings.logout();
@@ -108,10 +108,10 @@ test.describe('Authentication', () => {
 
   test.describe('Protected Routes', () => {
     
-    test('Access settings page when authenticated', async ({ app, testUser }) => {
+    test('Access settings page when authenticated', async ({ app, user }) => {
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.header.expectLoggedIn(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.header.expectLoggedIn(user.username);
 
       await app.settings.open();
       await app.settings.expectLoaded();

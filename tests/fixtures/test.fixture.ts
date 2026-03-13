@@ -6,7 +6,7 @@ import { createUser, type TestUser } from '@factories/user.factory';
 export const test = base.extend<{
   dbCleaner: void;
   app: App;
-  testUser: TestUser;
+  user: TestUser;
 }>({
   dbCleaner: async ({}, use) => {
     await resetDatabase();
@@ -15,7 +15,7 @@ export const test = base.extend<{
   app: async ({ page }, use) => {
     await use(new App(page));
   },
-  testUser: async ({}, use) => {
+  user: async ({}, use) => {
     const user = await createUser();
 
     await use(user);

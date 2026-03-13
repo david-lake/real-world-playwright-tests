@@ -111,4 +111,8 @@ dist
 
 # TernJS port file
 .tern-port
+
+# Test results
 test-results/
+blob-report/
+playwright-report/

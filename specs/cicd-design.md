@@ -1,7 +1,7 @@
-# RW-010: CI/CD Design Specification
+# CI/CD Design Specification
 
 ## Overview
-Production-grade GitHub Actions workflow for Playwright test automation. Designed for current scale (34 tests) with foundation for future growth (300+ tests).
+Production-grade GitHub Actions workflow for Playwright test automation. Designed for current scale (33 tests) with foundation for future growth (300+ tests).
 
 ## Design Principles
 
@@ -37,7 +37,7 @@ Production-grade GitHub Actions workflow for Playwright test automation. Designe
 
 ## Reporter Strategy
 
-### Current (34 tests)
+### Current (33 tests)
 ```typescript
 // playwright.config.ts
 reporter: process.env.CI ? 'blob' : 'html',
@@ -147,7 +147,7 @@ Add to `README.md`:
 
 | Decision | Rationale |
 |----------|-----------|
-| **No sharding** | 34 tests = ~1-2 min. Sharding adds complexity without benefit |
+| **No sharding** | 33 tests = ~1-2 min. Sharding adds complexity without benefit |
 | **Blob reporter** | Foundation for future sharding. Merge step is trivial now, essential later |
 | **Chromium only in CI** | Faster install, sufficient coverage. Full suite locally |
 | **7-day retention** | Balance visibility vs storage. Adjust as needed |
@@ -187,7 +187,7 @@ Add to `README.md`:
 - `playwright.config.ts` — add blob reporter for CI
 - `README.md` — add badge
 
-## Notes for Cursor
+## Notes
 
 1. Use `yarn` commands (project uses Yarn)
 2. Match Node version to project's `.nvmrc` or `package.json` engines

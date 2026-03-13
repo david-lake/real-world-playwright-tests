@@ -1,5 +1,7 @@
 # next-real-world
 
+[![Playwright Tests](https://github.com/david-lake/real-world-playwright-tests/actions/workflows/playwright.yml/badge.svg)](https://github.com/david-lake/real-world-playwright-tests/actions/workflows/playwright.yml)
+
 ## About
 
 ## [Demo] [RealWorld]
@@ -100,6 +102,17 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Continuous Integration
+
+Tests run automatically on every push and pull request via GitHub Actions.
+
+- **Workflow:** `.github/workflows/playwright.yml`
+- **Browser:** Chromium (CI) / All (local)
+- **Reports:** HTML artifacts retained for 7 days
+- **Average runtime:** ~2 minutes (with cache)
+
+[View latest test results](https://github.com/david-lake/real-world-playwright-tests/actions)
 
 [Demo]:https://next-real-world.vercel.app
 [RealWorld]:https://github.com/gothinkster/realworld

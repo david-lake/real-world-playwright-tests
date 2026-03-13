@@ -44,11 +44,11 @@ export default defineConfig({
     // },
   ],
 
-  // Run local dev server before starting the tests
+  // Run local dev server before starting the tests (or reuse when started by CI)
   webServer: {
     command: 'yarn dev -p 3000',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI || process.env.PLAYWRIGHT_REUSE_SERVER === 'true',
     timeout: 120000,
   },
 });

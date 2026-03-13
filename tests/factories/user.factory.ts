@@ -21,7 +21,7 @@ export interface UserData {
 /**
  * Test user returned by createUser - includes DB fields + plainPassword
  */
-export interface TestUser extends UserData {
+export interface CreatedUser extends UserData {
   id: number;
   plainPassword: string;
   bio?: string | null;
@@ -32,13 +32,13 @@ export function generateUniqueUser(): UserData {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(7);
   return {
-    username: `testuser_${timestamp}_${random}`,
+    username: `CreatedUser_${timestamp}_${random}`,
     email: `test_${timestamp}_${random}@example.com`,
     password: 'TestPass123!',
   };
 }
 
-export async function createUser(overrides: Partial<UserData> = {}): Promise<TestUser> {
+export async function createUser(overrides: Partial<UserData> = {}): Promise<CreatedUser> {
   const userData = generateUniqueUser();
   const plainPassword = overrides.password ?? userData.password;
   const user = await prisma.user.create({
@@ -54,39 +54,11 @@ export async function createUser(overrides: Partial<UserData> = {}): Promise<Tes
 }
 
 /**
- * Global cleanup: Delete ALL users from the test database.
- * Use in test.afterEach to ensure complete test isolation.
+ * Create a follow relationship for "Your Feed" tests.
+ * followerId follows followeeId (follower's feed will include followee's articles).
  */
-export async function deleteAllUsers() {
-  await prisma.user.deleteMany();
-}
-
-/**
- * Delete a user by email address
- */
-export async function deleteUserByEmail(email: string) {
-  const user = await prisma.user.findUnique({ where: { email }, select: { id: true } });
-  if (!user) return;
-
-  const userId = user.id;
-  const authoredArticles = await prisma.article.findMany({ where: { authorId: userId }, select: { id: true } });
-  const articleIds = authoredArticles.map((a) => a.id);
-
-  await prisma.$transaction([
-    // Relationships
-    prisma.follows.deleteMany({ where: { OR: [{ followerId: userId }, { followingId: userId }] } }),
-
-    // Content authored by user
-    prisma.comment.deleteMany({ where: { authorId: userId } }),
-    prisma.favorites.deleteMany({ where: { userId } }),
-
-    // Cleanup everything that can reference the user's authored articles
-    prisma.favorites.deleteMany({ where: { articleId: { in: articleIds } } }),
-    prisma.comment.deleteMany({ where: { articleId: { in: articleIds } } }),
-    prisma.articlesTags.deleteMany({ where: { articleId: { in: articleIds } } }),
-    prisma.article.deleteMany({ where: { id: { in: articleIds } } }),
-
-    // Finally delete the user
-    prisma.user.deleteMany({ where: { id: userId } }),
-  ]);
+export async function createFollowRelationship(followerId: number, followeeId: number): Promise<void> {
+  await prisma.follows.create({
+    data: { followerId, followingId: followeeId },
+  });
 }

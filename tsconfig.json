@@ -19,7 +19,8 @@
       "@fixtures/*": ["tests/fixtures/*"],
       "@pages/*": ["tests/pages/*"],
       "@components/*": ["tests/components/*"],
-      "@factories/*": ["tests/factories/*"]
+      "@factories/*": ["tests/factories/*"],
+      "@utils/*": ["tests/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

@@ -1,17 +1,16 @@
-// spec: specs/article-test-plan.md
-
-import { test, expect } from '@fixtures/auth.fixture';
+import { test, expect } from '@fixtures/test.fixture';
 import { generateUniqueArticle, createArticle } from '@factories/article.factory';
 import { createUser } from '@factories/user.factory';
 
 test.describe('Article', () => {
 
-  test.beforeEach(async ({ app, testUser }) => {
+  test.beforeEach(async ({ app, user }) => {
     await app.login.open();
-    await app.login.login(testUser.email, testUser.plainPassword);
+    await app.login.login(user.email, user.plainPassword);
   });
 
   test.describe('Creation', () => {
+
     test('Successful article creation', async ({ app }) => {
       const articleData = generateUniqueArticle();
 
@@ -36,8 +35,9 @@ test.describe('Article', () => {
   });
 
   test.describe('Editing', () => {
-    test('Edit own article successfully', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
+    
+    test('Edit own article successfully', async ({ app, user }) => {
+      const article = await createArticle(user.id)
       const updatedTitle = `Updated ${Date.now()}`;
       const updatedBody = `Updated body ${Date.now()}`;
 
@@ -60,6 +60,7 @@ test.describe('Article', () => {
   });
 
   test.describe('Favouriting', () => {
+
     test('Favourite and unfavourite article from global feed', async ({ app }) => {
       const author = await createUser();
       const article = await createArticle(author.id);
@@ -77,8 +78,9 @@ test.describe('Article', () => {
   });
 
   test.describe('Deletion', () => {
-    test('Delete own article', async ({ app, testUser }) => {
-      const article = await createArticle(testUser.id)
+    
+    test('Delete own article', async ({ app, user }) => {
+      const article = await createArticle(user.id)
 
       await app.article.open(article.slug)
       await app.article.delete();

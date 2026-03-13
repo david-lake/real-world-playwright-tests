@@ -15,8 +15,8 @@ export default defineConfig({
   // Single worker required for DB isolation (cleaner resets DB before each test)
   workers: 1,
 
-  // Reporter to use
-  reporter: 'list',
+  // Reporter to use (blob in CI enables report merging and future sharding)
+  reporter: process.env.CI ? 'blob' : 'html',
 
   // Shared settings for all the projects below
   use: {
@@ -44,7 +44,7 @@ export default defineConfig({
     // },
   ],
 
-  // Run local dev server before starting the tests
+  // Run local dev server before starting the tests (or reuse when started by CI)
   webServer: {
     command: 'yarn dev -p 3000',
     url: 'http://localhost:3000',

@@ -1997,15 +1997,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commander-js/extra-typings@npm:^13.1.0":
-  version: 13.1.0
-  resolution: "@commander-js/extra-typings@npm:13.1.0"
-  peerDependencies:
-    commander: ~13.1.0
-  checksum: c4c9b0bd3bd62a0d4b713d2e5a543986134ef87d29edfd15298a8c51de74df25265814789d49371ce28d84282b0abfed53452fe6dfdb939219343bb64a0dfb2c
-  languageName: node
-  linkType: hard
-
 "@cspotcode/source-map-support@npm:^0.8.0":
   version: 0.8.1
   resolution: "@cspotcode/source-map-support@npm:0.8.1"
@@ -6998,13 +6989,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^13.1.0":
-  version: 13.1.0
-  resolution: "commander@npm:13.1.0"
-  checksum: 8ca2fcb33caf2aa06fba3722d7a9440921331d54019dabf906f3603313e7bf334b009b862257b44083ff65d5a3ab19e83ad73af282bd5319f01dc228bdf87ef0
-  languageName: node
-  linkType: hard
-
 "commander@npm:^2.20.0, commander@npm:^2.20.3, commander@npm:^2.8.1":
   version: 2.20.3
   resolution: "commander@npm:2.20.3"
@@ -7332,7 +7316,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3, cross-spawn@npm:^7.0.6":
+"cross-spawn@npm:^7.0.2, cross-spawn@npm:^7.0.3":
   version: 7.0.6
   resolution: "cross-spawn@npm:7.0.6"
   dependencies:
@@ -8358,19 +8342,6 @@ __metadata:
   version: 2.2.0
   resolution: "entities@npm:2.2.0"
   checksum: 19010dacaf0912c895ea262b4f6128574f9ccf8d4b3b65c7e8334ad0079b3706376360e28d8843ff50a78aabcb8f08f0a32dbfacdc77e47ed77ca08b713669b3
-  languageName: node
-  linkType: hard
-
-"env-cmd@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "env-cmd@npm:11.0.0"
-  dependencies:
-    "@commander-js/extra-typings": ^13.1.0
-    commander: ^13.1.0
-    cross-spawn: ^7.0.6
-  bin:
-    env-cmd: bin/env-cmd.js
-  checksum: 7df6b27f1468d4e9f9b973f8c176107b70b96fc437fdde91235f6929e4344b2f996475f0f462c642e04cd84ab79dab77f509b9eadfa100a5db637ab69cbaa1ae
   languageName: node
   linkType: hard
 
@@ -13018,7 +12989,6 @@ __metadata:
     crypto-hash: ^2.0.1
     cssnano: ^5.1.12
     date-fns: ^2.28.0
-    env-cmd: ^11.0.0
     eslint: 8.19.0
     eslint-config-next: 12.2.0
     eslint-config-prettier: ^8.5.0
@@ -13038,7 +13008,6 @@ __metadata:
     nexus: ^1.3.0
     nexus-validate: ^1.2.0
     playwright: ^1.58.2
-    playwright-healer: ^0.1.0
     postcss: ^8.4.14
     prettier: ^2.7.1
     prisma: ^4.0.0
@@ -14339,17 +14308,6 @@ __metadata:
   bin:
     playwright-core: cli.js
   checksum: fd8c4c6658b80f5db90af36db9f560e7bf461f704d0ffe706e8858570af0321312fff9c44a5ee49552df3e3cce981e1f8dd9e8b09e6d7bdd62e094639b68bddd
-  languageName: node
-  linkType: hard
-
-"playwright-healer@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "playwright-healer@npm:0.1.0"
-  dependencies:
-    fastest-levenshtein: ^1.0.12
-  peerDependencies:
-    playwright: ^1.42.0
-  checksum: 49023aca110f1c2a59d6262f1183451f191d69883d1fb8f808cbb0435bd86b9d131f359ec4a3a0311b0ee334ad653d1991042e8dc3759112bc7281479556ac9b
   languageName: node
   linkType: hard
 

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "A fullstack implementation of the RealWorld App using Next.js, Prisma ORM and Apollo GraphQL stack",
   "private": true,
+  "packageManager": "yarn@3.2.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

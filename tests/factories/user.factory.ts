@@ -21,7 +21,7 @@ export interface UserData {
 /**
  * Test user returned by createUser - includes DB fields + plainPassword
  */
-export interface TestUser extends UserData {
+export interface CreatedUser extends UserData {
   id: number;
   plainPassword: string;
   bio?: string | null;
@@ -32,13 +32,13 @@ export function generateUniqueUser(): UserData {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(7);
   return {
-    username: `testuser_${timestamp}_${random}`,
+    username: `CreatedUser_${timestamp}_${random}`,
     email: `test_${timestamp}_${random}@example.com`,
     password: 'TestPass123!',
   };
 }
 
-export async function createUser(overrides: Partial<UserData> = {}): Promise<TestUser> {
+export async function createUser(overrides: Partial<UserData> = {}): Promise<CreatedUser> {
   const userData = generateUniqueUser();
   const plainPassword = overrides.password ?? userData.password;
   const user = await prisma.user.create({

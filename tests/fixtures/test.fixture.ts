@@ -12,7 +12,7 @@ export const test = base.extend<{
     await resetDatabase();
     await use();
   },
-  app: async ({ page }, use) => {
+  app: async ({ page, dbCleaner }, use) => {
     await use(new App(page));
   },
   user: async ({}, use) => {

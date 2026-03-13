@@ -19,7 +19,7 @@ export interface UserData {
 }
 
 /**
- * Test user returned by createUser - includes DB fields + plainPassword
+ * Created user returned by createUser - includes DB fields + plainPassword
  */
 export interface CreatedUser extends UserData {
   id: number;
@@ -32,7 +32,7 @@ export function generateUniqueUser(): UserData {
   const timestamp = Date.now();
   const random = Math.random().toString(36).substring(7);
   return {
-    username: `CreatedUser_${timestamp}_${random}`,
+    username: `TestUser_${timestamp}_${random}`,
     email: `test_${timestamp}_${random}@example.com`,
     password: 'TestPass123!',
   };

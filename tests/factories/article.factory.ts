@@ -116,16 +116,6 @@ export async function createComment(
 }
 
 /**
- * Create a follow relationship for "Your Feed" tests.
- * followerId follows followeeId (follower's feed will include followee's articles).
- */
-export async function createFollowRelationship(followerId: number, followeeId: number): Promise<void> {
-  await prisma.follows.create({
-    data: { followerId, followingId: followeeId },
-  });
-}
-
-/**
  * Create a favorite (user favorited article) for profile "Favorited Articles" tests.
  */
 export async function createFavorite(articleId: number, userId: number): Promise<void> {
@@ -136,20 +126,4 @@ export async function createFavorite(articleId: number, userId: number): Promise
     where: { id: articleId },
     data: { favoritesCount: { increment: 1 } },
   });
-}
-
-/**
- * Delete an article by slug (for cleanup when creating via API/factory).
- */
-export async function deleteArticleBySlug(slug: string): Promise<void> {
-  const article = await prisma.article.findUnique({ where: { slug }, select: { id: true } });
-  if (!article) return;
-
-  const articleId = article.id;
-  await prisma.$transaction([
-    prisma.favorites.deleteMany({ where: { articleId } }),
-    prisma.comment.deleteMany({ where: { articleId } }),
-    prisma.articlesTags.deleteMany({ where: { articleId } }),
-    prisma.article.deleteMany({ where: { id: articleId } }),
-  ]);
 }

@@ -1,22 +1,21 @@
 // spec: specs/feed-navigation-test-plan.md
 
-import { test, expect } from '@fixtures/auth.fixture';
+import { test, expect } from '@fixtures/test.fixture';
 import {
   createArticle,
   createArticles,
-  createFollowRelationship,
   createFavorite,
   generateUniqueArticle,
 } from '@factories/article.factory';
-import { createUser, deleteUserByEmail } from '@factories/user.factory';
+import { createUser, createFollowRelationship } from '@factories/user.factory';
 
 test.describe('Feeds', () => {
 
   test.describe('Home', () => {
 
-    test('Global Feed: Active by default for guests showing all articles', async ({ app, testUser }) => {
+    test('Global Feed: Active by default for guests showing all articles', async ({ app, user }) => {
       const author = await createUser();
-      const articleA = await createArticle(testUser.id)
+      const articleA = await createArticle(user.id)
       const articleB = await createArticle(author.id)
 
       await app.home.open();
@@ -28,16 +27,16 @@ test.describe('Feeds', () => {
       await app.feed.expectArticleVisible(articleB.title)
     });
 
-    test('Switching feeds when following users with articles', async ({ app, testUser }) => {
+    test('Switching feeds when following users with articles', async ({ app, user }) => {
       const author1 = await createUser();
       const author2 = await createUser();
-      const articleA = await createArticle(testUser.id)
+      const articleA = await createArticle(user.id)
       const articleB = await createArticle(author1.id)
       const articleC = await createArticle(author2.id);
-      await createFollowRelationship(testUser.id, author1.id);
+      await createFollowRelationship(user.id, author1.id);
 
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
+      await app.login.login(user.email, user.plainPassword);
       await app.home.expectLoaded();
       await app.home.gotoYourFeed();
 
@@ -53,9 +52,9 @@ test.describe('Feeds', () => {
       await app.feed.expectArticleVisible(articleC.title);
     });
 
-    test('Your Feed: Empty when user follows no one', async ({ app, testUser }) => {
+    test('Your Feed: Empty when user follows no one', async ({ app, user }) => {
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
+      await app.login.login(user.email, user.plainPassword);
       await app.home.expectLoaded();
 
       await app.home.gotoYourFeed();
@@ -127,41 +126,41 @@ test.describe('Feeds', () => {
 
   test.describe('User Profile', () => {
     
-    test('My Articles active by default showing user created articles only', async ({ app, testUser }) => {
+    test('My Articles active by default showing user created articles only', async ({ app, user }) => {
       const author = await createUser();
-      const articleA = await createArticle(testUser.id);
+      const articleA = await createArticle(user.id);
       const articleB = await createArticle(author.id);
 
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.profile.open(testUser.username);
-      await app.profile.expectLoaded(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.profile.open(user.username);
+      await app.profile.expectLoaded(user.username);
 
       await app.profile.expectMyArticlesTabActive();
       await app.feed.expectArticleVisible(articleA.title);
       await app.feed.expectArticleNotVisible(articleB.title);
     });
 
-    test('My Articles empty when user has no articles', async ({ app, testUser }) => {
+    test('My Articles empty when user has no articles', async ({ app, user }) => {
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.profile.open(testUser.username);
-      await app.profile.expectLoaded(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.profile.open(user.username);
+      await app.profile.expectLoaded(user.username);
 
       await app.profile.expectMyArticlesTabActive();
       await app.feed.expectNoArticles();
     });
 
-    test('Favorited Articles shows favorited articles only', async ({ app, testUser }) => {
+    test('Favorited Articles shows favorited articles only', async ({ app, user }) => {
       const author = await createUser();
       const articleA = await createArticle(author.id);
       const articleB = await createArticle(author.id);
-      await createFavorite(articleA.id, testUser.id);
+      await createFavorite(articleA.id, user.id);
 
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.profile.open(testUser.username);
-      await app.profile.expectLoaded(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.profile.open(user.username);
+      await app.profile.expectLoaded(user.username);
       await app.profile.gotoFavoritedArticles();
 
       await app.profile.expectFavoritedArticlesTabActive();
@@ -169,11 +168,11 @@ test.describe('Feeds', () => {
       await app.feed.expectArticleNotVisible(articleB.title);
     });
 
-    test('Favorited Articles empty when user has no favorited articles', async ({ app, testUser }) => {
+    test('Favorited Articles empty when user has no favorited articles', async ({ app, user }) => {
       await app.login.open();
-      await app.login.login(testUser.email, testUser.plainPassword);
-      await app.profile.open(testUser.username);
-      await app.profile.expectLoaded(testUser.username);
+      await app.login.login(user.email, user.plainPassword);
+      await app.profile.open(user.username);
+      await app.profile.expectLoaded(user.username);
       await app.profile.gotoFavoritedArticles();
 
       await app.profile.expectFavoritedArticlesTabActive();

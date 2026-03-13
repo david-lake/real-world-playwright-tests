@@ -41,7 +41,7 @@ jobs:
           key: playwright-${{ steps.playwright-version.outputs.version }}-${{ runner.os }}
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable --immutable-cache
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'

@@ -1,6 +1,6 @@
 import { test as base, expect } from '@playwright/test';
-import { App } from 'tests/app/app';
-import { resetDatabase } from '../db/cleaner';
+import { App } from '@utils/app';
+import { resetDatabase } from '@utils/db';
 import { createUser, type TestUser } from '@factories/user.factory';
 
 export const test = base.extend<{
@@ -17,7 +17,6 @@ export const test = base.extend<{
   },
   user: async ({}, use) => {
     const user = await createUser();
-
     await use(user);
   },
 });

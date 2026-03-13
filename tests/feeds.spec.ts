@@ -4,11 +4,10 @@ import { test, expect } from '@fixtures/test.fixture';
 import {
   createArticle,
   createArticles,
-  createFollowRelationship,
   createFavorite,
   generateUniqueArticle,
 } from '@factories/article.factory';
-import { createUser } from '@factories/user.factory';
+import { createUser, createFollowRelationship } from '@factories/user.factory';
 
 test.describe('Feeds', () => {
 

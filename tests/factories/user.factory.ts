@@ -52,3 +52,13 @@ export async function createUser(overrides: Partial<UserData> = {}): Promise<Cre
   });
   return { ...user, plainPassword };
 }
+
+/**
+ * Create a follow relationship for "Your Feed" tests.
+ * followerId follows followeeId (follower's feed will include followee's articles).
+ */
+export async function createFollowRelationship(followerId: number, followeeId: number): Promise<void> {
+  await prisma.follows.create({
+    data: { followerId, followingId: followeeId },
+  });
+}

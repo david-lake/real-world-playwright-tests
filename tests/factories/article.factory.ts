@@ -116,16 +116,6 @@ export async function createComment(
 }
 
 /**
- * Create a follow relationship for "Your Feed" tests.
- * followerId follows followeeId (follower's feed will include followee's articles).
- */
-export async function createFollowRelationship(followerId: number, followeeId: number): Promise<void> {
-  await prisma.follows.create({
-    data: { followerId, followingId: followeeId },
-  });
-}
-
-/**
  * Create a favorite (user favorited article) for profile "Favorited Articles" tests.
  */
 export async function createFavorite(articleId: number, userId: number): Promise<void> {

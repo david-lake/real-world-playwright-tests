@@ -461,7 +461,7 @@ test('create article draft', async ({ app, user }) => {
 - [RealWorld Spec](https://github.com/gothinkster/realworld)
 - [Playwright Documentation](https://playwright.dev/)
 - [Page Object Model Pattern](https://playwright.dev/docs/pom)
-- [Test agents]([https://playwright.dev/](https://playwright.dev/docs/test-agents))
+- [Test agents](https://playwright.dev/docs/test-agents)
 - [Prisma Documentation](https://www.prisma.io/docs)
 
 ---

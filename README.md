@@ -11,6 +11,14 @@
 
 This isn't just a collection of tests — it's a **reference implementation** of how to build maintainable, scalable E2E test suites for modern web applications.
 
+- ✅ **Test Architecture** — How to structure large E2E suites
+- ✅ **Playwright Best Practices** — Fixtures, POM, component objects
+- ✅ **Database Testing** — Prisma integration for test data
+- ✅ **CI/CD Integration** — GitHub Actions with service containers
+- ✅ **Test Isolation** — Guaranteed clean state per test
+- ✅ **Maintainable Code** — TypeScript, clear abstractions, DRY principles
+- ✅ **AI-Native Development** — Agent-driven test planning, generation, and healing
+
 **Built for:** SDETs, QA Engineers, and developers who want to see professional-grade test automation patterns in action.
 
 ## 🏗️ Architecture Overview
@@ -447,18 +455,6 @@ test('create article draft', async ({ app, user }) => {
   await app.editor.expectDraftSaved();
 });
 ```
-
-## 🎓 Learnings & Patterns
-
-This project demonstrates:
-
-- ✅ **Test Architecture** — How to structure large E2E suites
-- ✅ **Playwright Best Practices** — Fixtures, POM, component objects
-- ✅ **Database Testing** — Prisma integration for test data
-- ✅ **CI/CD Integration** — GitHub Actions with service containers
-- ✅ **Test Isolation** — Guaranteed clean state per test
-- ✅ **Maintainable Code** — TypeScript, clear abstractions, DRY principles
-- ✅ **AI-Native Development** — Agent-driven test planning, generation, and healing
 
 ## 🔗 Resources
 
